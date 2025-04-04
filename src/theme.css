@@ -1,0 +1,30 @@
+header{
+    transition: 0.5s ease-in-out;
+}
+
+body{
+    transition: 0.5s ease-in-out;
+}
+
+.custom-input-login::placeholder{
+    color: rgba(41, 161, 156, 0.5);
+}
+.custom-input-login > input::placeholder{
+    color: rgba(41, 161, 156, 0.5);
+}
+
+.custom-input-login > span > span > svg{
+    color: rgba(41, 161, 156, 0.5);
+}
+
+.custom-input-login{
+    transition: 0.5s ease-in-out;
+}
+
+#mainForm{
+    transition: 0.5s ease-in-out;
+}
+
+#mainFormText{
+    transition: 0.5s ease-in-out;
+}

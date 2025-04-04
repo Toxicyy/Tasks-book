@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "mail@example.com",
+      "password": "password123",
+      "options": {
+        "theme": "dark",
+        "language": "ru-RU"
+      }
+    }
+  ]
+}
