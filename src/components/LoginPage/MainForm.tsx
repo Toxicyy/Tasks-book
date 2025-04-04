@@ -6,7 +6,7 @@ import { AppDispatch, AppState } from "../../store";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import login from "../../authentification/login";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { setUser } from "../../state/user.slice";
 
 export default function MainForm() {
@@ -17,10 +17,19 @@ export default function MainForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>()
 
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/main");
+    }
+  }, []);
+
   async function handleClick(email: string, password: string) {
     const response = await login(email, password);
     if (response) {
       dispatch(setUser(response))
+      localStorage.setItem("user", JSON.stringify(response));
+      console.log(response);
       navigate("/main");
     }
     else{

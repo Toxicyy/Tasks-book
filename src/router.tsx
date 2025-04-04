@@ -24,6 +24,10 @@ export const router = createBrowserRouter([
         path: "/main",
         element: <MainPage />,
       },
+      {
+        path: "*",
+        loader: () => redirect("/login"),
+      },
     ],
   },
 ]);

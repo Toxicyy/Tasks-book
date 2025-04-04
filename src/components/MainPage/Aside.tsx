@@ -15,6 +15,8 @@ import Add from "../../images/Add.png";
 import Compare from "../../images/Compare.png";
 import Statistic from "../../images/Statistic.png";
 import LogOut from "../../images/LogOut.png";
+import { addTask } from "../../state/TaskStatistic.slice";
+import { useNavigate } from "react-router-dom";
 
 export default function Aside() {
   const tabs = useSelector((state: AppState) => state.tabs);
@@ -24,6 +26,12 @@ export default function Aside() {
   const [newTabTitle, setNewTabTitle] = useState("");
   const [error, setError] = useState("");
   const [deleteTabId, setDeleteTabId] = useState(-1);
+  const navigate = useNavigate();
+
+  const logOut = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -45,6 +53,7 @@ export default function Aside() {
         isInitial: false,
       })
     );
+    dispatch(addTask())
   };
 
   const handleCancel = () => {
@@ -65,7 +74,7 @@ export default function Aside() {
   };
 
   return (
-    <div className="pt-[20px] pl-[20px] h-[100vh] flex flex-col justify-between w-[11.7vw]">
+    <div className="pt-[20px] pl-[20px] h-[100vh] flex flex-col justify-between w-[16.07vw] z-40 shadow-right">
       <div className="flex flex-col gap-[60px]">
         <div className="flex gap-[10px]">
           <img className="w-[55px] h-[55px]" src={logo} alt="logo" />
@@ -137,7 +146,7 @@ export default function Aside() {
         </div>
       </div>
       <div className="items-end ">
-        <div className="flex gap-[10px] items-center cursor-pointer">
+        <div className="flex gap-[10px] items-center cursor-pointer pb-[15px]" onClick={() => logOut()}>
           <img className="w-[17px] h-[17px]" src={LogOut} alt="" />
           <h1 className="text-base">Выйти</h1>
         </div>
