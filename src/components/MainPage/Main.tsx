@@ -1,5 +1,6 @@
 import Header from "./Main-components/Header";
-import MainSection from "./Main-components/Mainsection";
+import MainSection from "./Main-components/MainSection";
+
 
 
 export default function Main(){
