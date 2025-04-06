@@ -19,7 +19,7 @@ export default function MainPage() {
     }
   }, []);
   return (
-    <div className="flex ">
+    <div className="flex">
       <Aside />
       <Main />
     </div>

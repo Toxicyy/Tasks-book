@@ -8,8 +8,10 @@ export default function TodoList() {
   const currentTab = tabs.find((tab) => tab.isActive);
   console.log(currentTab)
 
+  const theme = useSelector((state: AppState) => state.nightMode.mode);
+
   return (
-    <div className="w-[36.3vw] bg-[#FFFFFF] shadow-xl rounded-xl p-[20px] flex flex-col gap-[20px]">
+    <div className={"w-[36.3vw] shadow-xl duration-500 rounded-xl p-[20px] flex flex-col gap-[20px] mb-[30px] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
       <div className="">
         <h1 className="font-semibold text-xl text-[#29A19C] mb-[20px]">
           Активные задачи
