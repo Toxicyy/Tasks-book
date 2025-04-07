@@ -17,6 +17,11 @@ import logOutImage from "../../../images/LogOut.png";
 import { useNavigate } from "react-router-dom";
 import { toggleNightMode } from "../../../state/NightMode.slice";
 
+import LogOutNight from "../../../images/LogOutNight.png";
+import SettingsNight from "../../../images/SettingsNight.png";
+import UserImageNight from "../../../images/UserNight.png";
+import NightThemeWhite from "../../../images/NightThemeWhite.png";
+
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const currentUser = useSelector((state: AppState) => state.userSlice);
@@ -103,27 +108,51 @@ export default function Header() {
         <div
           className={
             "flex justify-end transition-opacity duration-500 " +
-            (isDropdownOpen
-              ? "opacity-100"
-              : "opacity-0")
+            (isDropdownOpen ? "opacity-100" : "opacity-0")
           }
         >
           <div className="absolute mt-0 w-48 bg-white shadow-lg rounded-lg">
-            <ul className="py-2" onClick={() => setDropdownOpen(false)}>
+            <ul
+              className={
+                "py-2 rounded-lg " + (theme ? " bg-[#2C3440]" : "bg-white")
+              }
+              onClick={() => setDropdownOpen(false)}
+            >
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]">
-                <img className="w-[17px] h-[17px]" src={UserImage} alt="" />
-                <h1>Личный кабинет</h1>
+                <img className="w-[17px] h-[17px]" src={theme ? UserImageNight : UserImage} alt="" />
+                <h1
+                  className={
+                    "duration-500 " +
+                    (theme ? " text-white" : " text-[#282846]")
+                  }
+                >
+                  Личный кабинет
+                </h1>
               </li>
               <li
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]"
                 onClick={() => dispatch(toggleNightMode())}
               >
-                <img className="w-[15px] h-[15px]" src={WhiteTheme} alt="" />
-                <h1>Темный режим</h1>
+                <img className="w-[15px] h-[15px]" src={theme ? NightThemeWhite : WhiteTheme} alt="" />
+                <h1
+                  className={
+                    "duration-500 " +
+                    (theme ? " text-white" : " text-[#282846]")
+                  }
+                >
+                  Темный режим
+                </h1>
               </li>
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]">
-                <img className="w-[17px] h-[17px]" src={Settings} alt="" />
-                <h1>Настройки</h1>
+                <img className="w-[17px] h-[17px]" src={theme ? SettingsNight : Settings} alt="" />
+                <h1
+                  className={
+                    "duration-500 " +
+                    (theme ? " text-white" : " text-[#282846]")
+                  }
+                >
+                  Настройки
+                </h1>
               </li>
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]">
                 <img className="w-[17px] h-[17px]" src={Premium} alt="" />
@@ -133,8 +162,15 @@ export default function Header() {
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]"
                 onClick={() => logOut()}
               >
-                <img className="w-[17px] h-[17px]" src={logOutImage} alt="" />
-                <h1>Выйти</h1>
+                <img className="w-[17px] h-[17px]" src={theme ? LogOutNight : logOutImage} alt="" />
+                <h1
+                  className={
+                    "duration-500 " +
+                    (theme ? " text-white" : " text-[#282846]")
+                  }
+                >
+                  Выйти
+                </h1>
               </li>
             </ul>
           </div>

@@ -213,6 +213,9 @@ export default function Aside() {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        styles={{
+          body: theme ? { backgroundColor: "#222831" } : { backgroundColor: "#FAFAFA" }
+        }}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Вернуться
