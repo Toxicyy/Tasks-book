@@ -78,7 +78,12 @@ export default function Aside() {
   };
 
   return (
-    <div className={"fixed pt-[20px] pl-[20px] h-[100vh] flex flex-col justify-between duration-500 w-[14.07vw] z-40 shadow-right " + (theme ? " bg-[#2C3440]" : " bg-[#FAFAFA]")}>
+    <div
+      className={
+        "fixed pt-[20px] pl-[20px] h-[100vh] flex flex-col justify-between duration-500 w-[14.07vw] z-40 shadow-right " +
+        (theme ? " bg-[#2C3440]" : " bg-[#FAFAFA]")
+      }
+    >
       <div className="flex flex-col gap-[60px]">
         <div className="flex gap-[10px]">
           <img className="w-[55px] h-[55px]" src={logo} alt="logo" />
@@ -104,21 +109,34 @@ export default function Aside() {
                 onClick={() => dispatch(makeTabActive({ id: tab.id - 1 }))}
               >
                 <div className="flex items-center gap-[10px]">
-                  <img className="w-[17px] duration-500 h-[17px]" src={theme ? tab?.nightSrc : tab?.src} alt="" />
-                  <h1 className={"text-base duration-500 text-[#282846] font-normal "  + (theme ? " text-[#F9F9F9]" : " ")}>
+                  <img
+                    className="w-[17px] duration-500 h-[17px]"
+                    src={theme ? tab?.nightSrc : tab?.src}
+                    alt=""
+                  />
+                  <h1
+                    className={
+                      "text-base duration-500 text-[#282846] font-normal " +
+                      (theme ? " text-[#F9F9F9]" : " ")
+                    }
+                  >
                     {tab.title}
                   </h1>
                 </div>
                 {(tab.isHover || tab.isActive) && (
                   <div className="rounded-l-2xl bg-[#29A19C] w-[30px] h-[18px] flex items-center justify-center text-white">
                     {" "}
-                    {!tab.isInitial ? <DeleteOutlined
-                      style={{ width: "13px", height: "13px" }}
-                      onClick={() => {
-                        setDeleteTabId(tab.id - 1);
-                        showModalDelete();
-                      }}
-                    /> : ""}
+                    {!tab.isInitial ? (
+                      <DeleteOutlined
+                        style={{ width: "13px", height: "13px" }}
+                        onClick={() => {
+                          setDeleteTabId(tab.id - 1);
+                          showModalDelete();
+                        }}
+                      />
+                    ) : (
+                      ""
+                    )}
                   </div>
                 )}
               </div>
@@ -137,22 +155,56 @@ export default function Aside() {
               Данные
             </h1>
             <div className="flex items-center gap-[10px] cursor-pointer">
-              <img className="w-[17px] duration-500 h-[17px]" src={theme ? StatisticNight : Statistic} alt="" />
-              <h1 className={"text-base duration-500 font-normal " + (theme ? " text-[#F9F9F9]" : " text-[#282846]")}>
+              <img
+                className="w-[17px] duration-500 h-[17px]"
+                src={theme ? StatisticNight : Statistic}
+                alt=""
+              />
+              <h1
+                className={
+                  "text-base duration-500 font-normal " +
+                  (theme ? " text-[#F9F9F9]" : " text-[#282846]")
+                }
+              >
                 Статистика
               </h1>
             </div>
             <div className="flex items-center gap-[10px] cursor-pointer">
-              <img className="w-[17px] h-[17px] duration-500" src={theme ? CompareNight : Compare} alt="" />
-              <h1 className={"text-base font-normal duration-500 " + (theme ? " text-[#F9F9F9]" : " text-[#282846]")}>Сравнить</h1>
+              <img
+                className="w-[17px] h-[17px] duration-500"
+                src={theme ? CompareNight : Compare}
+                alt=""
+              />
+              <h1
+                className={
+                  "text-base font-normal duration-500 " +
+                  (theme ? " text-[#F9F9F9]" : " text-[#282846]")
+                }
+              >
+                Сравнить
+              </h1>
             </div>
           </div>
         </div>
       </div>
       <div className="items-end ">
-        <div className="flex gap-[10px] items-center cursor-pointer pb-[15px]" onClick={() => logOut()}>
-          <img className="w-[17px] h-[17px] duration-500" src={theme ? LogOutNight : LogOut} alt="" />
-          <h1 className={"text-base font-normal duration-500 " + (theme ? " text-[#F9F9F9]" : " text-[#282846]")}>Выйти</h1>
+        <div
+          className="flex gap-[10px] items-center cursor-pointer pb-[15px]"
+          onClick={() => logOut()}
+        >
+          <img
+            className="w-[17px] h-[17px] duration-500"
+            src={theme ? LogOutNight : LogOut}
+            alt=""
+          />
+          <h1
+            className={
+              "text-base font-normal duration-500 " +
+              (theme ? " text-[#F9F9F9]" : " text-[#282846]")
+            }
+          >
+            Выйти
+          </h1>
         </div>
       </div>
 
@@ -161,6 +213,9 @@ export default function Aside() {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        styles={{
+          body: theme ? { backgroundColor: "#222831" } : { backgroundColor: "#FAFAFA" }
+        }}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Вернуться
