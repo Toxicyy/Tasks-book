@@ -27,6 +27,20 @@ export const api = {
           return UserDtoSchema.parse(res);
         });
     },
+    getUserByEmail: (email: string) => {
+      return fetch(`${baseUrl}/users?email=${email}`)
+        .then((response) => response.json())
+        .then((res) => {
+          return UserDtoSchema.array().parse(res);
+        });
+    },
+    getUserByName: (name: string) => {
+      return fetch(`${baseUrl}/users?name=${name}`)
+        .then((response) => response.json())
+        .then((res) => {
+          return UserDtoSchema.array().parse(res);
+        });
+    },
     deleteUser: (UserId: string) => {
       return fetch(`${baseUrl}/users/${UserId}`, {
         method: "DELETE",
@@ -83,5 +97,13 @@ export const api = {
       }).then((response) => response.json());
     },
   },
-
+  factOfTheDay: {
+    getFactOfTheDay: () => {
+      return fetch(`${baseUrl}/FactOfTheDay`)
+        .then((response) => response.json())
+        .then((res) => {
+          return res;
+        });
+    },
+  },
 };

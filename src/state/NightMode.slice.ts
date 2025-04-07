@@ -14,6 +14,7 @@ export const nightModeSlice = createSlice({
     reducers: {
         toggleNightMode: (state: NightModeState) => {
             state.mode = !state.mode;
+            localStorage.setItem("nightMode", JSON.stringify(state.mode));
         },
     },
 })
