@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "mail@example.com",
+      "password": "password123",
+      "options": {
+        "theme": "dark",
+        "language": "ru-RU"
+      }
+    }
+  ],
+  "userData": [
+    {
+      "id": "1",
+      "status": "USER",
+      "data": {
+        "statistics:": {
+          "tasks": 0,
+          "completed": 0,
+          "deleted": 0,
+          "edited": 0
+        },
+        "tasks": [],
+        "completed": []
+      }
+    }
+  ]
+}
