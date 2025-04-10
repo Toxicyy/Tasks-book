@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet, redirect } from "react-router-dom";
 import Login from "./Pages/Login";
 import Registration from "./Pages/Registration";
 import MainPage from "./Pages/MainPage";
+import UserProfilePage from "./Pages/UserProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: "/main",
         element: <MainPage />,
+      },
+      {
+        path: "/profile",
+        element: <UserProfilePage />,
       },
       {
         path: "*",

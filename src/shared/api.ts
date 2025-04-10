@@ -64,6 +64,15 @@ export const api = {
           });
         });
     },
+    updateUser: (user: User, userId: number) => {
+      return fetch(`${baseUrl}/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      }).then((response) => response.json());
+    },
   },
   userData: {
     getUserData: (userId: string) => {

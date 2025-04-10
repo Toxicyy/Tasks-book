@@ -11,5 +11,5 @@ export default async function registration(name: string, email: string, password
     if(response2.find((user) => user.email === email) !== undefined){
         return -2
     }
-    return api.user.addUser({id: id, name, email, password, options: null});
+    return api.user.addUser({id: id, name, email, password, avatarSrc: "", options: null});
 }

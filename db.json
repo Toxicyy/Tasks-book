@@ -2,9 +2,10 @@
   "users": [
     {
       "id": "1",
-      "name": "John Doe",
+      "name": "John Doenot",
       "email": "mail@example.com",
       "password": "password123",
+      "avatarSrc": "",
       "options": {
         "theme": "dark",
         "language": "ru-RU"
@@ -16,8 +17,7 @@
       "email": "mail123@example.com",
       "password": "password12345",
       "options": {
-        "theme": "dark",
-        "language": "ru-RU"
+        "theme": "dark"
       }
     }
   ],

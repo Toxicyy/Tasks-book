@@ -8,6 +8,7 @@ const initialState: UserState = {
     name: '',
     email: '',
     password: '',
+    avatarSrc: '',
     options: null
 }
 
@@ -21,9 +22,12 @@ export const userSlice = createSlice({
             state.email = action.payload.email
             state.password = action.payload.password
             state.options = action.payload.options
-        }
+        },
+        editName: (state: UserState, action) => { state.name = action.payload },
+        editEmail: (state: UserState, action) => { state.email = action.payload },
+        editAvatarSrc: (state: UserState, action) => { state.avatarSrc = action.payload },
     }
 })
 
-export const { setUser } = userSlice.actions
+export const { setUser, editName, editEmail } = userSlice.actions
 export default userSlice.reducer

@@ -1,11 +1,11 @@
-import { Button, Input, Modal, Select } from "antd";
+import { Button, ConfigProvider, Input, Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../../store";
 import AddTodo from "../../../images/AddTodo.png";
 import WhiteTheme from "../../../images/WhiteTheme.png";
 import BlackTheme from "../../../images/BlackTheme.png";
 import Anonym from "../../../images/Anonym.jpg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addTodo } from "../../../state/TodoList.slice";
 import { addTask } from "../../../state/TaskStatistic.slice";
 import { closeModal, openModal } from "../../../state/AddTodoModal.slice";
@@ -14,18 +14,18 @@ import Settings from "../../../images/Settings.png";
 import Premium from "../../../images/Premium.png";
 import UserImage from "../../../images/User.png";
 import logOutImage from "../../../images/LogOut.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toggleNightMode } from "../../../state/NightMode.slice";
 
 import LogOutNight from "../../../images/LogOutNight.png";
 import SettingsNight from "../../../images/SettingsNight.png";
 import UserImageNight from "../../../images/UserNight.png";
 import NightThemeWhite from "../../../images/NightThemeWhite.png";
+import { closeDropdown, openDropdown } from "../../../state/Dropdown.slice";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const currentUser = useSelector((state: AppState) => state.userSlice);
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
   const tabs = useSelector((state: AppState) => state.tabs);
   const todo = useSelector((state: AppState) => state.todoList);
   const modalState = useSelector((state: AppState) => state.addTodoModal);
@@ -33,6 +33,7 @@ export default function Header() {
   const [category, setCategory] = useState("Дом");
   const [title, setTitle] = useState("");
   const navigate = useNavigate();
+  const isDropDown = useSelector((state: AppState) => state.dropdown.isOpen);
 
   const logOut = () => {
     localStorage.removeItem("user");
@@ -98,42 +99,60 @@ export default function Header() {
               "w-[24px] h-[24px] duration-500 flex items-center justify-center shadow-xl cursor-pointer " +
               (theme ? "bg-[#2C3440]" : "bg-[#FFFFFF]")
             }
-            onClick={() => setDropdownOpen(!isDropdownOpen)}
+            onClick={() =>
+              isDropDown ? dispatch(closeDropdown()) : dispatch(openDropdown())
+            }
           >
             <DownOutlined style={{ color: "#29A19C" }} />
           </div>
         </div>
       </div>
-      {isDropdownOpen && (
+      {isDropDown && (
         <div
           className={
-            "flex justify-end transition-opacity duration-500 " +
-            (isDropdownOpen ? "opacity-100" : "opacity-0")
+            "relative flex justify-end transition-opacity duration-500 " +
+            (isDropDown ? "opacity-100" : "opacity-0")
           }
         >
-          <div className="absolute mt-0 w-48 bg-white shadow-lg rounded-lg">
+          <div className="absolute mt-0 w-48 bg-white shadow-lg rounded-lg z-50">
             <ul
               className={
                 "py-2 rounded-lg " + (theme ? " bg-[#2C3440]" : "bg-white")
               }
-              onClick={() => setDropdownOpen(false)}
+              onClick={() => dispatch(closeDropdown())}
             >
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]">
-                <img className="w-[17px] h-[17px]" src={theme ? UserImageNight : UserImage} alt="" />
-                <h1
-                  className={
-                    "duration-500 " +
-                    (theme ? " text-white" : " text-[#282846]")
-                  }
-                >
-                  Личный кабинет
-                </h1>
-              </li>
+              <Link to={"/profile"}><li
+                className={
+                  "px-4 py-2 cursor-pointer flex items-center gap-[10px]" +
+                  (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
+                }
+              >
+                  <img
+                    className="w-[17px] h-[17px]"
+                    src={theme ? UserImageNight : UserImage}
+                    alt=""
+                  />
+                  <h1
+                    className={
+                      "duration-500 " +
+                      (theme ? " text-white" : " text-[#282846]")
+                    }
+                  >
+                    Личный кабинет
+                  </h1>
+              </li></Link>
               <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]"
+                className={
+                  "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
+                  (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
+                }
                 onClick={() => dispatch(toggleNightMode())}
               >
-                <img className="w-[15px] h-[15px]" src={theme ? NightThemeWhite : WhiteTheme} alt="" />
+                <img
+                  className="w-[15px] h-[15px]"
+                  src={theme ? NightThemeWhite : WhiteTheme}
+                  alt=""
+                />
                 <h1
                   className={
                     "duration-500 " +
@@ -143,8 +162,17 @@ export default function Header() {
                   Темный режим
                 </h1>
               </li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]">
-                <img className="w-[17px] h-[17px]" src={theme ? SettingsNight : Settings} alt="" />
+              <li
+                className={
+                  "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
+                  (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
+                }
+              >
+                <img
+                  className="w-[17px] h-[17px]"
+                  src={theme ? SettingsNight : Settings}
+                  alt=""
+                />
                 <h1
                   className={
                     "duration-500 " +
@@ -154,15 +182,27 @@ export default function Header() {
                   Настройки
                 </h1>
               </li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]">
+              <li
+                className={
+                  "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
+                  (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
+                }
+              >
                 <img className="w-[17px] h-[17px]" src={Premium} alt="" />
-                <h1 className="text-[#29A19C] text-">Премиум</h1>
+                <h1 className="text-[#29A19C]">Премиум</h1>
               </li>
               <li
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-[10px]"
+                className={
+                  "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
+                  (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
+                }
                 onClick={() => logOut()}
               >
-                <img className="w-[17px] h-[17px]" src={theme ? LogOutNight : logOutImage} alt="" />
+                <img
+                  className="w-[17px] h-[17px]"
+                  src={theme ? LogOutNight : logOutImage}
+                  alt=""
+                />
                 <h1
                   className={
                     "duration-500 " +
@@ -176,51 +216,128 @@ export default function Header() {
           </div>
         </div>
       )}
-      <Modal
-        title=""
-        open={modalState.isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={[
-          <div className="flex justify-between">
-            <Button
-              style={{ width: "126px", height: "42px" }}
-              danger
-              type="primary"
-              onClick={handleCancel}
-            >
-              Отменить
-            </Button>
-            <Button
-              style={{
-                backgroundColor: "#29A19C",
-                width: "126px",
-                height: "42px",
-              }}
-              type="primary"
-              onClick={handleOk}
-            >
-              Добавить
-            </Button>
-          </div>,
-        ]}
+      <ConfigProvider
+        theme={{
+          components: {
+            Modal: {
+              footerBg: theme ? "#2C3440" : "#FFFFFF",
+              headerBg: theme ? "#2C3440" : "#FFFFFF",
+              contentBg: theme ? "#2C3440" : "#FFFFFF",
+              titleColor: "#29A19C",
+              titleFontSize: 20,
+            },
+            Select: {
+              colorText: theme ? "#29A19C" : "#282846",
+              optionSelectedColor: theme ? "#29A19C" : "black",
+              selectorBg: theme ? "#2C3440" : "#FFFFFF",
+              activeBorderColor: theme ? "#29A19C" : "#282846",
+              hoverBorderColor: theme ? "#29A19C" : "#282846",
+              colorBorder: theme ? "#29A19C" : "#282846",
+            },
+          },
+        }}
       >
-        <h1 className="text-xl text-[#29A19C] font-bold pb-[20px]">
-          Добавление задачи
-        </h1>
-        <h1 className="text-sm font-bold pb-[10px]">Что нужно сделать</h1>
-        <Input
-          onChange={(e) => setTitle(e.target.value)}
-          style={{ marginBottom: "20px" }}
-        ></Input>
-        <h1 className="text-sm font-bold pb-[10px]">Категория</h1>
-        <Select
-          defaultValue={tabs[0].title}
-          style={{ width: 200, marginBottom: "20px" }}
-          onChange={handleChange}
-          options={tabs.map((tab) => ({ value: tab.title, label: tab.title }))}
-        ></Select>
-      </Modal>
+        <Modal
+          title=""
+          open={modalState.isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          footer={[
+            <div className="flex justify-between">
+              <Button
+                style={{ width: "126px", height: "42px" }}
+                danger
+                type="primary"
+                onClick={handleCancel}
+              >
+                Отменить
+              </Button>
+              <Button
+                style={{
+                  backgroundColor: "#29A19C",
+                  width: "126px",
+                  height: "42px",
+                }}
+                type="primary"
+                onClick={handleOk}
+              >
+                Добавить
+              </Button>
+            </div>,
+          ]}
+        >
+          <h1 className="text-xl text-[#29A19C] font-bold pb-[20px]">
+            Добавление задачи
+          </h1>
+          <h1
+            className={
+              "text-sm font-bold pb-[10px] " +
+              (theme ? " text-white" : " text-[#282846]")
+            }
+          >
+            Что нужно сделать
+          </h1>
+          <Input
+            onChange={(e) => setTitle(e.target.value)}
+            style={
+              theme
+                ? {
+                    background: "#222831",
+                    border: "1px solid #29A19C",
+                    color: "#29A19C",
+                    marginBottom: "20px",
+                  }
+                : { background: "#FAFAFA", marginBottom: "20px" }
+            }
+            className={theme ? "custom-input-login" : ""}
+          ></Input>
+          <h1
+            className={
+              "text-sm font-bold pb-[10px] " +
+              (theme ? " text-white" : " text-[#282846]")
+            }
+          >
+            Категория
+          </h1>
+          <Select
+            dropdownStyle={{ background: theme ? "#222831" : "#FAFAFA" }}
+            defaultValue={tabs[0].title}
+            style={{ width: 200, marginBottom: "20px" }}
+            onChange={handleChange}
+            options={tabs.map((tab) => ({
+              value: tab.title,
+              label: tab.title,
+            }))}
+          ></Select>
+        </Modal>
+      </ConfigProvider>
+      {theme ? (
+        <style>
+          {`
+          /* Стили для рамки Select */
+          .custom-select .ant-select-selector {
+            border-color: #29A19C !important;
+          }
+
+          /* Стили для подсветки выбранного option */
+          .ant-select-item-option-active {
+            background-color: #3A4554 !important; /* Более мягкий цвет */
+          }
+
+          /* Цвет текста в выпадающем списке */
+          .ant-select-item {
+            color: #29A19C !important;
+          }
+
+          /* Цвет текста выбранного элемента */
+          .ant-select-selection-item {
+            color: #29A19C !important;
+          }
+        `}
+        </style>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

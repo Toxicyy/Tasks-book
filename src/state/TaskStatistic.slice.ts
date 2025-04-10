@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-type taskStatistic = {
+export type taskStatistic = {
     taskDone: number;
     taskTotal: number;
     taskDeleted: number;

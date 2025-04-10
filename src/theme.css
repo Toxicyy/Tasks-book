@@ -47,3 +47,15 @@ body {
     opacity: 1;
     transform: scale(1);
   }
+
+tr{
+  border: 2px solid #29A19C;
+}
+
+td{
+  border: 2px solid #29A19C;
+}
+
+tr.dark{
+  color: white
+}
