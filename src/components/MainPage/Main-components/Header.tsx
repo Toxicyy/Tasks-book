@@ -1,27 +1,29 @@
 import { Button, ConfigProvider, Input, Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../../store";
-import AddTodo from "../../../images/AddTodo.png";
-import WhiteTheme from "../../../images/WhiteTheme.png";
-import BlackTheme from "../../../images/BlackTheme.png";
-import Anonym from "../../../images/Anonym.jpg";
-import { useEffect, useState } from "react";
+import AddTodo from "../../../images//mainPage/header/AddTodo.png";
+import WhiteTheme from "../../../images/mainPage/header/WhiteTheme.png";
+import BlackTheme from "../../../images/mainPage/header/BlackTheme.png";
+import Anonym from "../../../images/mainPage/header/Anonym.jpg";
+import { useState } from "react";
 import { addTodo } from "../../../state/TodoList.slice";
 import { addTask } from "../../../state/TaskStatistic.slice";
 import { closeModal, openModal } from "../../../state/AddTodoModal.slice";
 import DownOutlined from "@ant-design/icons/lib/icons/DownOutlined";
-import Settings from "../../../images/Settings.png";
-import Premium from "../../../images/Premium.png";
-import UserImage from "../../../images/User.png";
-import logOutImage from "../../../images/LogOut.png";
+import Settings from "../../../images/mainPage/header/Settings.png";
+import Premium from "../../../images/mainPage/header/Premium.png";
+import UserImage from "../../../images/mainPage/header/User.png";
+import logOutImage from "../../../images/mainPage/LogOut.png";
 import { Link, useNavigate } from "react-router-dom";
 import { toggleNightMode } from "../../../state/NightMode.slice";
 
-import LogOutNight from "../../../images/LogOutNight.png";
-import SettingsNight from "../../../images/SettingsNight.png";
-import UserImageNight from "../../../images/UserNight.png";
-import NightThemeWhite from "../../../images/NightThemeWhite.png";
+import LogOutNight from "../../../images/DarkTheme/mainPage/LogOutNight.png";
+import SettingsNight from "../../../images/DarkTheme/mainPage/header/SettingsNight.png";
+import UserImageNight from "../../../images/DarkTheme/mainPage/header/UserNight.png";
+import NightThemeWhite from "../../../images/mainPage/header/NightThemeWhite.png";
 import { closeDropdown, openDropdown } from "../../../state/Dropdown.slice";
+import PremiumModal from "../../PremiumPage/PremiumModal";
+import SettingsModal from "../../SettingsPage/SettingsModal";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
@@ -34,7 +36,24 @@ export default function Header() {
   const [title, setTitle] = useState("");
   const navigate = useNavigate();
   const isDropDown = useSelector((state: AppState) => state.dropdown.isOpen);
+  const [isModalPremiumOpen, setIsModalPremiumOpen] = useState(false);
+  const [isModalSettingsOpen, setIsModalSettingsOpen] = useState(false);
 
+  function handleSettingsOk() {
+    setIsModalSettingsOpen(false);
+  }
+
+  function handleSettingsCancel() {
+    setIsModalSettingsOpen(false);
+  }
+
+  function handlePremiumOk() {
+    setIsModalPremiumOpen(false);
+  }
+
+  function handlePremiumCancel() {
+    setIsModalPremiumOpen(false);
+  }
   const logOut = () => {
     localStorage.removeItem("user");
     navigate("/login");
@@ -121,12 +140,13 @@ export default function Header() {
               }
               onClick={() => dispatch(closeDropdown())}
             >
-              <Link to={"/profile"}><li
-                className={
-                  "px-4 py-2 cursor-pointer flex items-center gap-[10px]" +
-                  (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
-                }
-              >
+              <Link to={"/profile"}>
+                <li
+                  className={
+                    "px-4 py-2 cursor-pointer flex items-center gap-[10px]" +
+                    (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
+                  }
+                >
                   <img
                     className="w-[17px] h-[17px]"
                     src={theme ? UserImageNight : UserImage}
@@ -140,7 +160,8 @@ export default function Header() {
                   >
                     Личный кабинет
                   </h1>
-              </li></Link>
+                </li>
+              </Link>
               <li
                 className={
                   "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
@@ -167,6 +188,7 @@ export default function Header() {
                   "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
                   (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
                 }
+                onClick={() => setIsModalSettingsOpen(true)}
               >
                 <img
                   className="w-[17px] h-[17px]"
@@ -187,6 +209,7 @@ export default function Header() {
                   "flex px-4 py-2 cursor-pointer items-center gap-[10px]" +
                   (theme ? " hover:bg-[#3A4554]" : " hover:bg-gray-100")
                 }
+                onClick={() => setIsModalPremiumOpen(true)}
               >
                 <img className="w-[17px] h-[17px]" src={Premium} alt="" />
                 <h1 className="text-[#29A19C]">Премиум</h1>
@@ -310,6 +333,16 @@ export default function Header() {
             }))}
           ></Select>
         </Modal>
+        <PremiumModal
+          isModalOpen={isModalPremiumOpen}
+          handleOk={handlePremiumOk}
+          handleCancel={handlePremiumCancel}
+        />
+        <SettingsModal
+          isModalOpen={isModalSettingsOpen}
+          handleOk={handleSettingsOk}
+          handleCancel={handleSettingsCancel}
+        />
       </ConfigProvider>
       {theme ? (
         <style>

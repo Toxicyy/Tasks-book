@@ -1,6 +1,6 @@
-header {
+/* header {
   transition: 0.5s ease-in-out;
-}
+} */
 
 body {
   transition: 0.5s ease-in-out;
@@ -34,28 +34,32 @@ body {
 }
 
 .todo-container {
-    position: relative;
-  }
-  
-  .icon-container {
-    opacity: 0;
-    transform: scale(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  
-  .todo-container:hover .icon-container {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-tr{
-  border: 2px solid #29A19C;
+  position: relative;
 }
 
-td{
-  border: 2px solid #29A19C;
+.icon-container {
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-tr.dark{
-  color: white
+.todo-container:hover .icon-container {
+  opacity: 1;
+  transform: scale(1);
+}
+
+tr {
+  border: 2px solid #29a19c;
+}
+
+td {
+  border: 2px solid #29a19c;
+}
+
+tr.dark {
+  color: white;
+}
+
+.custom-input-profile {
+  transition-duration: 500ms;
 }

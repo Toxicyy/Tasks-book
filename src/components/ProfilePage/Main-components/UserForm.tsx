@@ -1,12 +1,12 @@
 import FileUpload from "./FileUpload";
-import Anonym from "../../../images/Anonym.jpg";
+import Anonym from "../../../images/mainPage/header/Anonym.jpg";
 import { AppDispatch, AppState } from "../../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Input } from "antd";
 import { useEffect, useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
-import Facebook from "../../../images/facebook.png";
-import Twitter from "../../../images/twitter.png";
+import Facebook from "../../../images/loginPage/facebook.png";
+import Twitter from "../../../images/loginPage/twitter.png";
 import { editEmail, editName } from "../../../state/user.slice";
 import { api } from "../../../shared/api";
 import usernameVerification from "../../../authentification/usernameVerification";
@@ -20,39 +20,60 @@ export default function UserForm() {
   const [newEmail, setNewEmail] = useState(currentUser.email);
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [fetchError, setFetchError] = useState(false);
+  const theme = useSelector((state: AppState) => state.nightMode.mode);
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   async function handleClick() {
     if (!(newName === currentUser.name)) {
       const verification = await usernameVerification(newName);
-      if (verification) {
+      console.log(1, "name")
+      if (verification && newName.length > 3 && newName.length < 20 && !fetchError) {
         dispatch(editName(newName));
-        api.user.updateUser({...currentUser, name: newName}, currentUser.id);
-      } else {
+        api.user.updateUser({ ...currentUser, name: newName }, currentUser.id);
+        localStorage.setItem("user", JSON.stringify({ ...currentUser, name: newName }));
+        console.log(2, "name")
+      } else if(verification){
+        setNameError("");
+        console.log(3, "name")
+      }
+      else {
+        setFetchError(true)
         setNameError("Никнейм занят");
+        console.log(4, "name")
       }
     }
     if (!(newEmail === currentUser.email)) {
       const verification = await userEmailVerification(newEmail);
-      if (verification && emailPattern.test(newEmail)) {
+      console.log(1, "email")
+      if (verification && emailPattern.test(newEmail) && !fetchError) {
         dispatch(editEmail(newEmail));
-        api.user.updateUser({...currentUser, email: newEmail}, currentUser.id);
+        api.user.updateUser(
+          { ...currentUser, email: newEmail },
+          currentUser.id
+        );
+        localStorage.setItem("user", JSON.stringify({ ...currentUser, email: newEmail }));
+        console.log(2, "email")
       } else if (!emailPattern.test(newEmail)) {
         setEmailError("Неверный формат почты");
+        console.log(3, "email")
+      } else if(verification){
+        setNameError("");
+        console.log(4, "email")
       } else {
+        setFetchError(true)
         setEmailError("Почта занята");
+        console.log(5, "email")
       }
     }
     return;
   }
 
-  
-
   useEffect(() => {
     setNewName(currentUser.name);
-    setNewEmail(currentUser.email)
-    console.log("update")
+    setNewEmail(currentUser.email);
+    console.log("update");
   }, [currentUser]);
 
   function handleToggle() {
@@ -60,7 +81,12 @@ export default function UserForm() {
   }
 
   return (
-    <div className="w-[37.4vw] bg-[#FFFFFF] flex shadow-xl rounded-xl p-[20px] justify-between flex-wrap">
+    <div
+      className={
+        "w-[37.4vw] min-w[300px] flex shadow-xl rounded-xl p-[20px] justify-between duration-500 flex-wrap mb-[30px] " +
+        (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")
+      }
+    >
       <div className="flex flex-col items-center">
         <img
           className="w-[150px] h-[150px] rounded-[75px]"
@@ -72,23 +98,72 @@ export default function UserForm() {
         </div>
       </div>
       <div className="flex flex-col">
-        <h1 className="font-semibold text-[16px] mb-[10px]">Ваш никнейм:</h1>
+        <h1
+          className={
+            "font-semibold text-[16px] mb-[10px] " +
+            (theme ? " text-white" : " text-[#282846]")
+          }
+        >
+          Ваш никнейм:
+        </h1>
         <Input
           status={nameError ? "error" : ""}
           value={newName}
-          style={{ width: "23vw", height: "44px", marginBottom: "30px" }}
-          onChange={(e) => setNewName(e.target.value)}
+          style={
+            theme
+              ? {
+                  width: "23vw",
+                  height: "44px",
+                  background: "#222831",
+                  border: "1px solid #29A19C",
+                  color: "#29A19C",
+                  marginBottom: "30px",
+                  
+                }
+              : { width: "23vw", background: "#FAFAFA", marginBottom: "30px", height:"44px" }
+          }
+          className="custom-input-profile"
+          onChange={(e) => {
+            setNewName(e.target.value) 
+            if(nameError) setNameError("")
+            if(fetchError) setFetchError(false)
+            }
+          }
         />
-        <p>{nameError}</p>
-        <h1 className="font-semibold text-[16px] mb-[10px]">Ваша почта:</h1>
+        <p className="text-[#FF0000] mt-[-30px]">{nameError}</p>
+        <h1
+          className={
+            "font-semibold text-[16px] mb-[10px] " +
+            (theme ? " text-white" : " text-[#282846]")
+          }
+        >
+          Ваша почта:
+        </h1>
         <Input
           status={emailError ? "error" : ""}
           value={newEmail}
-          style={{ width: "23vw", height: "44px", marginBottom: "10px" }}
-          onChange={(e) => setNewEmail(e.target.value)}
+          style={
+            theme
+              ? {
+                  width: "23vw",
+                  height: "44px",
+                  background: "#222831",
+                  border: "1px solid #29A19C",
+                  color: "#29A19C",
+                  marginBottom: "10px",
+                }
+              : { width: "23vw", background: "#FAFAFA", marginBottom: "10px", height:"44px" }
+          }
+          className="custom-input-profile"
+          onChange={(e) =>{ 
+            setNewEmail(e.target.value)
+            if(emailError) setEmailError("")
+            if(fetchError) setFetchError(false)
+            }
+          }
         />
-        <p>{emailError}</p>
-        <div className="flex gap-[10px] items-center mb-[30px]">
+        <p className="text-[#FF0000] mt-[-10px]">{emailError}</p>
+        <div className="flex gap-[10px] items-center mb-[30px] mt-[10px]">
           <div
             className="w-5 h-5 rounded-sm border-[#29A19C] border-2 flex justify-center items-center transition-all duration-300 ease-in-out cursor-pointer"
             onClick={handleToggle}
@@ -99,9 +174,20 @@ export default function UserForm() {
               />
             )}
           </div>
-          <h1 className="text-[16px]">Подписаться на рассылку</h1>
+          <h1
+            className={
+              "text-[16px]" + (theme ? " text-white" : " text-[#282846]")
+            }
+          >
+            Подписаться на рассылку
+          </h1>
         </div>
-        <h1 className="font-semibold text-[16px] mb-[10px]">
+        <h1
+          className={
+            "font-semibold text-[16px] mb-[10px]" +
+            (theme ? " text-white" : " text-[#282846]")
+          }
+        >
           Ваши социальные сети:
         </h1>
         <div className="flex gap-[20px] mb-[30px]">
@@ -124,9 +210,7 @@ export default function UserForm() {
           onClick={() => handleClick()}
         >
           {" "}
-          <p
-            className="text-[16px] font-semibold tracking-wider"
-          >
+          <p className="text-[16px] font-semibold tracking-wider">
             Сохранить изменения
           </p>
         </Button>

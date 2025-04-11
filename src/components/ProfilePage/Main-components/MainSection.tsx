@@ -6,7 +6,7 @@ import UserForm from "./UserForm";
 
 export default function MainSection() {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between flex-wrap">
       <div>
         <UserForm />
       </div>

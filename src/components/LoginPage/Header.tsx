@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import logo from "../../images/logo.png";
+import logo from "../../images/mainPage/header/logo.png";
 import { AppDispatch, AppState } from "../../store";
 import { toggleNightMode } from "../../state/NightMode.slice";
-import WhiteTheme from "../../images/WhiteTheme.png";
-import BlackTheme from "../../images/BlackTheme.png";
+import WhiteTheme from "../../images/mainPage/header/WhiteTheme.png";
+import BlackTheme from "../../images/mainPage/header/BlackTheme.png";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
@@ -12,8 +12,7 @@ export default function Header() {
     <>
       <header
         className={
-          "flex justify-between items-center m-[20px] " +
-          (theme ? " bg-[#222831]" : "bg-[#FAFAFA]")
+          "flex justify-between items-center m-[20px] "
         }
       >
         <div className="flex gap-[10px]">

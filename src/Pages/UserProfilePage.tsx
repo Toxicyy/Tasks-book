@@ -2,23 +2,37 @@ import { useNavigate } from "react-router-dom";
 import Aside from "../components/MainPage/Aside";
 import ProfileMain from "../components/ProfilePage/ProfileMain";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, AppState } from "../store";
 import { setUser } from "../state/user.slice";
+import { toggleNightMode } from "../state/NightMode.slice";
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
-  const currentUser = localStorage.getItem("user");
   const dispatch = useDispatch<AppDispatch>();
-    useEffect(() => {
-        if (currentUser) {
-          dispatch(setUser(JSON.parse(currentUser)));
-        } else {
-          navigate("/login");
-        }
-      }, []);
+  const theme = useSelector((state: AppState) => state.nightMode.mode);
+  useEffect(() => {
+    const currentUser = localStorage.getItem("user");
+    const localTheme = localStorage.getItem("nightMode");
+    if (localTheme && theme !== JSON.parse(localTheme)) dispatch(toggleNightMode());
+      console.log("АЛО")
+    if (currentUser) {
+      dispatch(setUser(JSON.parse(currentUser)));
+    } else {
+      navigate("/login");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("nightMode", JSON.stringify(theme));
+  }, [theme]);
   return (
-    <div className="flex">
+    <div
+      className={
+        "flex duration-500 pb-[236px] " +
+        (theme ? " bg-[#222831]" : "bg-[#FAFAFA]")
+      }
+    >
       <div onClick={() => navigate("/main")}>
         <Aside />
       </div>

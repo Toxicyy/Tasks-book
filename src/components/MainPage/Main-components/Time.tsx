@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import TimeImage from "../../../images/Time.png"
-import DateImage from "../../../images/Date.png"
+import TimeImage from "../../../images/mainPage/mainSec/Time.png"
+import DateImage from "../../../images/mainPage/mainSec/Date.png"
 import { CarryOutOutlined } from "@ant-design/icons";
 import { AppState } from "../../../store";
 import { useSelector } from "react-redux";
-import TimeNight from "../../../images/TimeNight.png"
-import DateNight from "../../../images/DateNight.png"
+import TimeNight from "../../../images/DarkTheme/mainPage/mainSec/TimeNight.png"
+import DateNight from "../../../images/DarkTheme/mainPage/mainSec/DateNight.png"
 
 export default function Time() {
     const [time, setTime] = useState(new Date());

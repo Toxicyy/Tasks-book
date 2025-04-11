@@ -1,6 +1,6 @@
 import { Input, Button } from "antd";
-import facebook from "../../images/facebook.png";
-import twitter from "../../images/twitter.png";
+import facebook from "../../images/loginPage/facebook.png"
+import twitter from "../../images/loginPage/twitter.png";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../store";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";

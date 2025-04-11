@@ -8,7 +8,6 @@ const UserDtoSchema = z.object({
   name: z.string(),
   email: z.string(),
   password: z.string(),
-  options: z.any().nullable(),
 });
 
 export const api = {

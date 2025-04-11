@@ -2,23 +2,16 @@
   "users": [
     {
       "id": "1",
-      "name": "John Doenot",
+      "name": "John DoNo",
       "email": "mail@example.com",
       "password": "password123",
-      "avatarSrc": "",
-      "options": {
-        "theme": "dark",
-        "language": "ru-RU"
-      }
+      "avatarSrc": ""
     },
     {
       "id": "2",
       "name": "John DoNot",
       "email": "mail123@example.com",
-      "password": "password12345",
-      "options": {
-        "theme": "dark"
-      }
+      "password": "password12345"
     }
   ],
   "userData": [

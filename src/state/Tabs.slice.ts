@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import House from "../images/House.png";
-import Family from "../images/Family.png";
-import Work from "../images/Work.png";
-import Sport from "../images/Sport.png";
-import HouseNight from "../images/HouseNight.png";
-import FamilyNight from "../images/FamilyNight.png";
-import WorkNight from "../images/WorkNight.png";
-import SportNight from "../images/SportNight.png";
+import House from "../images/mainPage/aside/House.png";
+import Family from "../images/mainPage/aside/Family.png";
+import Work from "../images/mainPage/aside/Work.png";
+import Sport from "../images/mainPage/aside/Sport.png";
+import HouseNight from "../images/DarkTheme/mainPage/aside/HouseNight.png";
+import FamilyNight from "../images/DarkTheme/mainPage/aside/FamilyNight.png";
+import WorkNight from "../images/DarkTheme/mainPage/aside/WorkNight.png";
+import SportNight from "../images/DarkTheme/mainPage/aside/SportNight.png";
 
 export type TabState = {
   src: string;

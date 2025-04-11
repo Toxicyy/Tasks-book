@@ -1,4 +1,4 @@
-import copyright from '../../images/copyright.png'
+import copyright from '../../images/loginPage/copyright.png'
 
 export default function Footer(){
     return(
