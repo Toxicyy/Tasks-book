@@ -13,12 +13,13 @@ import {
   doneTask,
   editTask,
 } from "../../../state/TaskStatistic.slice";
+import { useGetTodosQuery } from "../../../state/todoListApi.slice";
 
 export default function Todo({ id, title }: { id: number; title: string }) {
   const dispatch = useDispatch<AppDispatch>();
-  const todo = useSelector((state: AppState) =>
-    state.todoList.todos.find((t) => t.id === id)
-  );
+  const {data: todoList, isLoading, isError} = useGetTodosQuery()
+  const todo = todoList?.todos.find((todo) => todo.id === id);
+
   const [isHover, setIsHover] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);

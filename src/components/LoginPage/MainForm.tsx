@@ -1,5 +1,5 @@
 import { Input, Button } from "antd";
-import facebook from "../../images/loginPage/facebook.png"
+import facebook from "../../images/loginPage/facebook.png";
 import twitter from "../../images/loginPage/twitter.png";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../store";
@@ -7,7 +7,9 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import login from "../../authentification/login";
 import { useEffect, useState } from "react";
-import { setUser } from "../../state/user.slice";
+import getUserByToken from "../../authentification/getUserByToken";
+import { setToken } from "../../state/auth.slice";
+import { useGetUserQuery } from "../../state/userApi.slice";
 
 export default function MainForm() {
   const [email, setEmail] = useState<string>("");
@@ -15,26 +17,34 @@ export default function MainForm() {
   const [error, setError] = useState<boolean>(false);
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
+    const token = localStorage.getItem("token");
+    if (token) {
       navigate("/main");
     }
   }, []);
 
   async function handleClick(email: string, password: string) {
     const response = await login(email, password);
-    if (response) {
-      dispatch(setUser(response))
-      localStorage.setItem("user", JSON.stringify(response));
-      console.log(response);
-      navigate("/main");
+    const data = await response.json();
+    if (response.ok) {
+      const userResponse = await getUserByToken(data.token);
+      if(userResponse.ok){
+        dispatch(setToken(data.token));
+        localStorage.setItem("token", data.token);
+        navigate("/main");
+      } else {
+        setError(true);
+      }
+    } else {
+      setError(true);
     }
-    else{
-      setError(true)
-    }
+  }
+
+  async function getUser() {
+    useGetUserQuery();
   }
   return (
     <>
@@ -68,8 +78,8 @@ export default function MainForm() {
               }
               placeholder="E-mail"
               onChange={(e) => {
-                setEmail(e.target.value)
-                setError(false)
+                setEmail(e.target.value);
+                setError(false);
               }}
             />
             <Input.Password
@@ -90,7 +100,7 @@ export default function MainForm() {
               }
               onChange={(e) => {
                 setError(false);
-                setPassword(e.target.value)
+                setPassword(e.target.value);
               }}
             />
             {error && (
@@ -119,7 +129,6 @@ export default function MainForm() {
                     }
               }
               onClick={() => handleClick(email, password)}
-              
             >
               Войти
             </Button>

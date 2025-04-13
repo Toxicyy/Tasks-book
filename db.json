@@ -2,21 +2,10 @@
   "users": [
     {
       "id": "1",
-      "name": "John DoNo",
+      "username": "John",
       "email": "mail@example.com",
       "password": "password123",
-      "avatarSrc": ""
-    },
-    {
-      "id": "2",
-      "name": "John DoNot",
-      "email": "mail123@example.com",
-      "password": "password12345"
-    }
-  ],
-  "userData": [
-    {
-      "id": "1",
+      "avatarSrc": "",
       "status": "USER",
       "data": {
         "statistics:": {
@@ -28,6 +17,38 @@
         "tasks": [],
         "completed": []
       }
+    },
+    {
+      "id": "2",
+      "username": "John DoNot",
+      "email": "mail123@example.com",
+      "password": "password12345",
+      "avatarSrc": "",
+      "status": "USER",
+      "data": {
+        "statistics:": {
+          "tasks": 0,
+          "completed": 0,
+          "deleted": 0,
+          "edited": 0
+        },
+        "tasks": [],
+        "completed": []
+      }
+    },
+    {
+      "id": 1744557572245,
+      "username": "Toxicy",
+      "email": "mail12345@gmail.com",
+      "password": "$2b$10$ggvB4tb9SeQlwjKGftjNYeFFFoe8etvkHvN7mfVJJ4wFD5Y2OO.pC",
+      "todos": [
+        {
+          "id": 1744575926502,
+          "title": "wew",
+          "completed": false,
+          "category": "Дом"
+        }
+      ]
     }
   ],
   "FactOfTheDay": [

@@ -5,8 +5,7 @@ import AddTodo from "../../../images//mainPage/header/AddTodo.png";
 import WhiteTheme from "../../../images/mainPage/header/WhiteTheme.png";
 import BlackTheme from "../../../images/mainPage/header/BlackTheme.png";
 import Anonym from "../../../images/mainPage/header/Anonym.jpg";
-import { useState } from "react";
-import { addTodo } from "../../../state/TodoList.slice";
+import { useEffect, useState } from "react";
 import { addTask } from "../../../state/TaskStatistic.slice";
 import { closeModal, openModal } from "../../../state/AddTodoModal.slice";
 import DownOutlined from "@ant-design/icons/lib/icons/DownOutlined";
@@ -24,12 +23,12 @@ import NightThemeWhite from "../../../images/mainPage/header/NightThemeWhite.png
 import { closeDropdown, openDropdown } from "../../../state/Dropdown.slice";
 import PremiumModal from "../../PremiumPage/PremiumModal";
 import SettingsModal from "../../SettingsPage/SettingsModal";
+import { useAddTodoMutation} from "../../../state/todoListApi.slice";
+import { useGetUserQuery } from "../../../state/userApi.slice";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
-  const currentUser = useSelector((state: AppState) => state.userSlice);
   const tabs = useSelector((state: AppState) => state.tabs);
-  const todo = useSelector((state: AppState) => state.todoList);
   const modalState = useSelector((state: AppState) => state.addTodoModal);
   const dispatch = useDispatch<AppDispatch>();
   const [category, setCategory] = useState("Дом");
@@ -38,6 +37,10 @@ export default function Header() {
   const isDropDown = useSelector((state: AppState) => state.dropdown.isOpen);
   const [isModalPremiumOpen, setIsModalPremiumOpen] = useState(false);
   const [isModalSettingsOpen, setIsModalSettingsOpen] = useState(false);
+  const [addTodoMutation, {}] = useAddTodoMutation();
+  const {data: currentUser} = useGetUserQuery();
+
+  useEffect(() => {console.log(currentUser)}, [currentUser]);
 
   function handleSettingsOk() {
     setIsModalSettingsOpen(false);
@@ -55,7 +58,7 @@ export default function Header() {
     setIsModalPremiumOpen(false);
   }
   const logOut = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
@@ -64,14 +67,13 @@ export default function Header() {
   };
 
   const handleOk = () => {
-    dispatch(
-      addTodo({
-        title: title,
-        category: category,
-        completed: false,
-        id: todo.todos.length + 1,
-      })
-    );
+    const todo = {
+      title: title,
+      completed: false,
+      category: category,
+    }
+    console.log(todo)
+    addTodoMutation(todo);
     dispatch(addTask());
     dispatch(closeModal());
   };
@@ -106,7 +108,7 @@ export default function Header() {
               (theme ? "text-white" : " ")
             }
           >
-            Хорошего дня, {currentUser?.name}
+            Хорошего дня, {currentUser?.user.username}
           </h1>
           <img
             className="w-[45px] h-[45px] rounded-4xl"

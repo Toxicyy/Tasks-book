@@ -12,13 +12,10 @@ export default function UserProfilePage() {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   useEffect(() => {
-    const currentUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
     const localTheme = localStorage.getItem("nightMode");
     if (localTheme && theme !== JSON.parse(localTheme)) dispatch(toggleNightMode());
-      console.log("АЛО")
-    if (currentUser) {
-      dispatch(setUser(JSON.parse(currentUser)));
-    } else {
+    if(!token){
       navigate("/login");
     }
   }, []);

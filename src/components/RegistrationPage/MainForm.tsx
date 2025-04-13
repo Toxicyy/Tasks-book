@@ -41,12 +41,10 @@ export default function MainForm() {
     if (!minimum8Chars.test(password))
       return setPassError("Пароль должен содержать не менее 8 символов");
 
-    const status = await registration(name, email, password);
-    if (status === -1)
-      setUsernameError("Пользователь с таким именем уже существует");
-    if (status === -2)
-      setMailError("Пользователь с такой почтой уже существует");
-    if (status !== -1 && status !== -2) {
+    const response = await registration(name, email, password);
+    const status = await response.json();
+    setUsernameError(status.message);
+    if (response.status === 201) {
       navigate("/login");
     }
     console.log(status);

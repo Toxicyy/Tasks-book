@@ -1,15 +1,5 @@
-import { api } from "../shared/api";
+import { newApi } from "../shared/api";
 
-export default async function registration(name: string, email: string, password: string) {
-    const response = await api.user.getUserByName(name);
-    const id = response.length + 1;
-    console.log(id)
-    if(response.find((user) => user.name === name) !== undefined){ 
-        return -1
-    }
-    const response2 = await api.user.getUserByEmail(email);
-    if(response2.find((user) => user.email === email) !== undefined){
-        return -2
-    }
-    return api.user.addUser({id: id, name, email, password, avatarSrc: "", options: null});
+export default async function registration(username: string, email: string, password: string) {
+    return await newApi.register(username, email, password);
 }

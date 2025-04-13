@@ -11,68 +11,69 @@ import { editEmail, editName } from "../../../state/user.slice";
 import { api } from "../../../shared/api";
 import usernameVerification from "../../../authentification/usernameVerification";
 import userEmailVerification from "../../../authentification/userEmailVerification";
+import {
+  useGetUserQuery,
+  useUpdateUserMutation,
+} from "../../../state/userApi.slice";
 
 export default function UserForm() {
-  const currentUser = useSelector((state: AppState) => state.userSlice);
+  const { data: currentUser } = useGetUserQuery();
   const dispatch = useDispatch<AppDispatch>();
   const [checked, setChecked] = useState(false);
-  const [newName, setNewName] = useState(currentUser.name);
-  const [newEmail, setNewEmail] = useState(currentUser.email);
+  const [newName, setNewName] = useState(currentUser?.user.username);
+  const [newEmail, setNewEmail] = useState(currentUser?.user.email);
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [fetchError, setFetchError] = useState(false);
   const theme = useSelector((state: AppState) => state.nightMode.mode);
+  const [updateUser, {}] = useUpdateUserMutation();
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   async function handleClick() {
-    if (!(newName === currentUser.name)) {
-      const verification = await usernameVerification(newName);
-      console.log(1, "name")
-      if (verification && newName.length > 3 && newName.length < 20 && !fetchError) {
-        dispatch(editName(newName));
-        api.user.updateUser({ ...currentUser, name: newName }, currentUser.id);
-        localStorage.setItem("user", JSON.stringify({ ...currentUser, name: newName }));
-        console.log(2, "name")
-      } else if(verification){
-        setNameError("");
-        console.log(3, "name")
-      }
-      else {
-        setFetchError(true)
-        setNameError("Никнейм занят");
-        console.log(4, "name")
+    if (newName) {
+      if (!(newName === currentUser?.user.username)) {
+        const verification = await usernameVerification(newName);
+        if (
+          verification &&
+          newName.length > 3 &&
+          newName.length < 20 &&
+          !fetchError
+        ) {
+          if (currentUser) {
+            updateUser({ ...currentUser?.user, username: newName });
+          }
+        } else if (verification) {
+          setNameError("");
+        } else {
+          setFetchError(true);
+          setNameError("Никнейм занят");
+        }
       }
     }
-    if (!(newEmail === currentUser.email)) {
-      const verification = await userEmailVerification(newEmail);
-      console.log(1, "email")
-      if (verification && emailPattern.test(newEmail) && !fetchError) {
-        dispatch(editEmail(newEmail));
-        api.user.updateUser(
-          { ...currentUser, email: newEmail },
-          currentUser.id
-        );
-        localStorage.setItem("user", JSON.stringify({ ...currentUser, email: newEmail }));
-        console.log(2, "email")
-      } else if (!emailPattern.test(newEmail)) {
-        setEmailError("Неверный формат почты");
-        console.log(3, "email")
-      } else if(verification){
-        setNameError("");
-        console.log(4, "email")
-      } else {
-        setFetchError(true)
-        setEmailError("Почта занята");
-        console.log(5, "email")
+    if (newEmail) {
+      if (!(newEmail === currentUser?.user.email)) {
+        const verification = await userEmailVerification(newEmail);
+        if (verification && emailPattern.test(newEmail) && !fetchError) {
+          if (currentUser) {
+            updateUser({ ...currentUser?.user, email: newEmail });
+          }
+        } else if (!emailPattern.test(newEmail)) {
+          setEmailError("Неверный формат почты");
+        } else if (verification) {
+          setNameError("");
+        } else {
+          setFetchError(true);
+          setEmailError("Почта занята");
+        }
       }
     }
     return;
   }
 
   useEffect(() => {
-    setNewName(currentUser.name);
-    setNewEmail(currentUser.email);
+    setNewName(currentUser?.user.username);
+    setNewEmail(currentUser?.user.email);
     console.log("update");
   }, [currentUser]);
 
@@ -118,17 +119,20 @@ export default function UserForm() {
                   border: "1px solid #29A19C",
                   color: "#29A19C",
                   marginBottom: "30px",
-                  
                 }
-              : { width: "23vw", background: "#FAFAFA", marginBottom: "30px", height:"44px" }
+              : {
+                  width: "23vw",
+                  background: "#FAFAFA",
+                  marginBottom: "30px",
+                  height: "44px",
+                }
           }
           className="custom-input-profile"
           onChange={(e) => {
-            setNewName(e.target.value) 
-            if(nameError) setNameError("")
-            if(fetchError) setFetchError(false)
-            }
-          }
+            setNewName(e.target.value);
+            if (nameError) setNameError("");
+            if (fetchError) setFetchError(false);
+          }}
         />
         <p className="text-[#FF0000] mt-[-30px]">{nameError}</p>
         <h1
@@ -152,15 +156,19 @@ export default function UserForm() {
                   color: "#29A19C",
                   marginBottom: "10px",
                 }
-              : { width: "23vw", background: "#FAFAFA", marginBottom: "10px", height:"44px" }
+              : {
+                  width: "23vw",
+                  background: "#FAFAFA",
+                  marginBottom: "10px",
+                  height: "44px",
+                }
           }
           className="custom-input-profile"
-          onChange={(e) =>{ 
-            setNewEmail(e.target.value)
-            if(emailError) setEmailError("")
-            if(fetchError) setFetchError(false)
-            }
-          }
+          onChange={(e) => {
+            setNewEmail(e.target.value);
+            if (emailError) setEmailError("");
+            if (fetchError) setFetchError(false);
+          }}
         />
         <p className="text-[#FF0000] mt-[-10px]">{emailError}</p>
         <div className="flex gap-[10px] items-center mb-[30px] mt-[10px]">

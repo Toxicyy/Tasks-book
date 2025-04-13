@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { User } from "../types/userType";
+import registration from "../authentification/registration";
 
-const baseUrl = "http://localhost:3000";
+const baseUrl = "http://localhost:5000";
 
 const UserDtoSchema = z.object({
   id: z.any(),
@@ -108,6 +109,52 @@ export const api = {
   factOfTheDay: {
     getFactOfTheDay: () => {
       return fetch(`${baseUrl}/FactOfTheDay`)
+        .then((response) => response.json())
+        .then((res) => {
+          return res;
+        });
+    },
+  },
+};
+
+export const newApi = {
+  login: (email: string, password: string) => {
+    return fetch(`${baseUrl}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    })
+  },
+  register: (username: string, email: string, password: string) => {
+    return fetch(`${baseUrl}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, email, password }),
+    })
+  },
+  getUserByToken: (token: string) => {
+    return fetch(`${baseUrl}/api/get/user`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+  },
+
+  checkUsername: (username: string) => {
+    return fetch(`${baseUrl}/check-username/${username}`)
+  },
+  
+  checkEmail: (email: string) => {
+    return fetch(`${baseUrl}/check-email/${email}`)
+  },
+  user: {
+    getUser: (username: string) => {
+      return fetch(`${baseUrl}/user/username/${username}`)
         .then((response) => response.json())
         .then((res) => {
           return res;

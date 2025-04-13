@@ -1,9 +1,7 @@
-import { api } from "../shared/api";
+import { newApi } from "../shared/api";
 
 export default async function usernameVerification(name: string) {
-    const response = await api.user.getUserByName(name);
-    if(response.length > 0){
-        return false
-    }
-    return true
+    const response = await newApi.checkUsername(name);
+    const data = await response.json();
+    return !data.usernameTaken
 }

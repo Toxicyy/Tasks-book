@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux";
 import Todo from "./Todo";
 import { AppState } from "../../../store";
+import { useGetTodosQuery } from "../../../state/todoListApi.slice";
 
 export default function TodoList() {
-  const todoList = useSelector((state: AppState) => state.todoList);
+  const {data: todoList, isLoading, isError} = useGetTodosQuery()
   const tabs = useSelector((state: AppState) => state.tabs);
   const currentTab = tabs.find((tab) => tab.isActive);
-  console.log(currentTab)
 
   const theme = useSelector((state: AppState) => state.nightMode.mode);
 
@@ -17,7 +17,7 @@ export default function TodoList() {
           Активные задачи
         </h1>
         <div className="flex flex-col gap-[10px]">
-          {todoList.todos
+          {todoList?.todos
             .filter((todo) => !todo.completed)
             .filter((todo) => todo.category === currentTab?.title)
             .map((todo) => (
@@ -30,7 +30,7 @@ export default function TodoList() {
           Завершенные задачи
         </h1>
         <div className="flex flex-col gap-[10px]">
-          {todoList.todos
+          {todoList?.todos
             .filter((todo) => todo.completed)
             .filter((todo) => todo.category === currentTab?.title)
             .map((todo) => (

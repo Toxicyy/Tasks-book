@@ -40,7 +40,7 @@ export default function Aside() {
   const statistic = useSelector((state: AppState) => state.statisticOfWeek);
 
   const logOut = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
