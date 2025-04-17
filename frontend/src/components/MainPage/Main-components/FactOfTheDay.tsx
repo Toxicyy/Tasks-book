@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../../shared/api";
+import { newApi } from "../../../shared/api";
 import { useSelector } from "react-redux";
 import { AppState } from "../../../store";
 
@@ -8,10 +8,11 @@ export default function FactOfTheDay() {
   const [fact, setFact] = useState<string>("");
   useEffect(() => {
     const today = new Date();
-    const day = today.getDay() + 1;
+    const day = today.getDay();
     async function getFactOfTheDay() {
-      const response = await api.factOfTheDay.getFactOfTheDay();
-      setFact(response[day].text);
+      const response = await newApi.getFactOfTheDay();
+      const data = await response.json();
+      setFact(data.factOfTheDay[day].text);
     }
     getFactOfTheDay();
   }, []);

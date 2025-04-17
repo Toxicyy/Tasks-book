@@ -1,14 +1,12 @@
 import FileUpload from "./FileUpload";
 import Anonym from "../../../images/mainPage/header/Anonym.jpg";
-import { AppDispatch, AppState } from "../../../store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../../../store";
+import { useSelector } from "react-redux";
 import { Button, Input } from "antd";
 import { useEffect, useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
 import Facebook from "../../../images/loginPage/facebook.png";
 import Twitter from "../../../images/loginPage/twitter.png";
-import { editEmail, editName } from "../../../state/user.slice";
-import { api } from "../../../shared/api";
 import usernameVerification from "../../../authentification/usernameVerification";
 import userEmailVerification from "../../../authentification/userEmailVerification";
 import {
@@ -17,8 +15,7 @@ import {
 } from "../../../state/userApi.slice";
 
 export default function UserForm() {
-  const { data: currentUser } = useGetUserQuery();
-  const dispatch = useDispatch<AppDispatch>();
+  const { data: currentUser, refetch } = useGetUserQuery();
   const [checked, setChecked] = useState(false);
   const [newName, setNewName] = useState(currentUser?.user.username);
   const [newEmail, setNewEmail] = useState(currentUser?.user.email);
@@ -68,13 +65,13 @@ export default function UserForm() {
         }
       }
     }
+    refetch()
     return;
   }
 
   useEffect(() => {
     setNewName(currentUser?.user.username);
     setNewEmail(currentUser?.user.email);
-    console.log("update");
   }, [currentUser]);
 
   function handleToggle() {

@@ -11,7 +11,7 @@ export const categoriesApiSlice = createApi({
         headers.set("authorization", `Bearer ${token}`);
       }
       return headers;
-    }
+    },
   }),
   endpoints: (builder) => ({
     getCategories: builder.query<CategoryState, void>({
@@ -26,18 +26,40 @@ export const categoriesApiSlice = createApi({
     }),
     deleteCategory: builder.mutation<Category, CategoryId>({
       query: (id) => ({
-        url: `/category/${id}`,
+        url: `/category`,
         method: "DELETE",
+        body: { id },
       }),
     }),
     updateCategory: builder.mutation<Category, Category>({
       query: (category) => ({
-        url: `/category/${category.id}`,
+        url: `/category`,
         method: "PUT",
         body: category,
       }),
     }),
+    initialCategories: builder.mutation<CategoryState, Category[]>({
+      query: (categories) => ({
+        url: "/category/initial",
+        method: "POST",
+        body: categories,
+      }),
+    }),
+    makeCategoryActive: builder.mutation<CategoryState, CategoryId>({
+      query: (id) => ({
+        url: "/category/makeActive",
+        method: "PUT",
+        body: { id },
+      }),
+    })
   }),
 });
 
-export const { useGetCategoriesQuery, useAddCategoryMutation, useDeleteCategoryMutation, useUpdateCategoryMutation } = categoriesApiSlice;
+export const {
+  useGetCategoriesQuery,
+  useAddCategoryMutation,
+  useDeleteCategoryMutation,
+  useUpdateCategoryMutation,
+  useInitialCategoriesMutation,
+  useMakeCategoryActiveMutation
+} = categoriesApiSlice;

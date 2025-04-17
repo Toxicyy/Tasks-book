@@ -8,7 +8,6 @@ export const userApiSlice = createApi({
     baseUrl: "http://localhost:5000",
     prepareHeaders(headers) {
       const token = localStorage.getItem("token");
-      console.log(token)
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }

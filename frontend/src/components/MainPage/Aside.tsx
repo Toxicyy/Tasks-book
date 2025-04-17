@@ -1,31 +1,44 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import logo from "../../images/mainPage/header/logo.png";
-import { AppDispatch, AppState } from "../../store";
+import { AppState } from "../../store";
 import { ConfigProvider } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import House from "../../images/mainPage/aside/House.png";
-import HouseNight from "../../images/DarkTheme/mainPage/aside/HouseNight.png";
+import AddCategory from "./Main-components/modals/AddCategory";
 import Add from "../../images/mainPage/aside/Add.png";
 import Compare from "../../images/mainPage/aside/Compare.png";
 import Statistic from "../../images/mainPage/aside/Statistic.png";
 import LogOut from "../../images/mainPage/LogOut.png";
 import { useNavigate } from "react-router-dom";
-import StatisticNight from "../../images/DarkTheme/mainPage/aside/StatisticNight.png"
+import StatisticNight from "../../images/DarkTheme/mainPage/aside/StatisticNight.png";
 import CompareNight from "../../images/DarkTheme/mainPage/aside/CompareNight.png";
 import LogOutNight from "../../images/DarkTheme/mainPage/LogOutNight.png";
 import CompareModal from "./Main-components/modals/CompareModal";
 import StatisticModal from "./Main-components/modals/StatisticModal";
-import AddCategory from "./Main-components/modals/AddCategory";
 import DeleteCategory from "./Main-components/modals/DeleteCategory";
-import { useAddCategoryMutation, useDeleteCategoryMutation, useGetCategoriesQuery, useUpdateCategoryMutation } from "../../state/categoriesApi.slice";
+import {
+  useDeleteCategoryMutation,
+  useGetCategoriesQuery,
+  useInitialCategoriesMutation,
+  useMakeCategoryActiveMutation,
+  useUpdateCategoryMutation,
+} from "../../state/categoriesApi.slice";
+import { Category } from "../../types/category";
+import House from "../../images/mainPage/aside/House.png";
+import Family from "../../images/mainPage/aside/Family.png";
+import Work from "../../images/mainPage/aside/Work.png";
+import Sport from "../../images/mainPage/aside/Sport.png";
+import HouseNight from "../../images/DarkTheme/mainPage/aside/HouseNight.png";
+import FamilyNight from "../../images/DarkTheme/mainPage/aside/FamilyNight.png";
+import WorkNight from "../../images/DarkTheme/mainPage/aside/WorkNight.png";
+import SportNight from "../../images/DarkTheme/mainPage/aside/SportNight.png";
 
 export default function Aside() {
-  // const tabs = useSelector((state: AppState) => state.tabs);
-  const { data: tabs, isSuccess } = useGetCategoriesQuery();
+  const { data: tabs, isSuccess, refetch } = useGetCategoriesQuery();
+  const [activeCategory] = useMakeCategoryActiveMutation();
   const [updateCategory] = useUpdateCategoryMutation();
   const [deleteCategory] = useDeleteCategoryMutation();
-  const [AddCategoryMutation] = useAddCategoryMutation();
+  const [initialCategories] = useInitialCategoriesMutation();
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
@@ -37,15 +50,81 @@ export default function Aside() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    AddCategoryMutation({title: "Дом", src: "House", nightSrc: "HouseNight", isActive: false, isInitial: false});
-    AddCategoryMutation({title: "Семья", src: "Family", nightSrc: "FamilyNight", isActive: false, isInitial: false});
-    AddCategoryMutation({title: "Работа", src: "Work", nightSrc: "WorkNight", isActive: false, isInitial: false});
-    AddCategoryMutation({title: "Спорт", src: "Sport", nightSrc: "SportNight", isActive: false, isInitial: false});
-  }, []);
+    if (tabs?.categories.length === 0) {
+      initialCategories([
+        {
+          id: 1,
+          src: "House",
+          nightSrc: "HouseNight",
+          title: "Дом",
+          isActive: true,
+          isInitial: true,
+        },
+        {
+          id: 2,
+          src: "Work",
+          nightSrc: "WorkNight",
+          title: "Работа",
+          isActive: false,
+          isInitial: true,
+        },
+        {
+          id: 3,
+          src: "Family",
+          nightSrc: "FamilyNight",
+          title: "Семья",
+          isActive: false,
+          isInitial: true,
+        },
+        {
+          id: 4,
+          src: "Sport",
+          nightSrc: "SportNight",
+          title: "Спорт",
+          isActive: false,
+          isInitial: true,
+        },
+      ]);
+      refetch();
+    }
+    activeCategory(1);
+    refetch();
+  }, [isSuccess]);
 
   const logOut = () => {
     localStorage.removeItem("token");
     navigate("/login");
+  };
+
+  type GetSrcFunction = (tab: Category) => string;
+  const getSrc: GetSrcFunction = (tab) => {
+    if (theme) {
+      switch (tab.nightSrc) {
+        case "HouseNight":
+          return HouseNight;
+        case "WorkNight":
+          return WorkNight;
+        case "FamilyNight":
+          return FamilyNight;
+        case "SportNight":
+          return SportNight;
+        default:
+          return HouseNight;
+      }
+    } else {
+      switch (tab.src) {
+        case "House":
+          return House;
+        case "Work":
+          return Work;
+        case "Family":
+          return Family;
+        case "Sport":
+          return Sport;
+        default:
+          return House;
+      }
+    }
   };
 
   const showModal = (task: "add" | "delete" | "statistic" | "compare") => {
@@ -63,15 +142,24 @@ export default function Aside() {
   const handleOk = (task: "add" | "delete" | "statistic" | "compare") => {
     if (task === "delete") {
       setIsModalOpenDelete(false);
-      if(tabs) deleteCategory(deleteTabId);
+      deleteCategory(deleteTabId);
+      refetch();
     } else if (task === "add") {
       if (newTabTitle === "") {
         setError("Поле не должно быть пустым");
         return;
       }
       setIsModalOpen(false);
-      if(tabs){
-        updateCategory({id: tabs.categories.length + 1, title: newTabTitle, src: "House", nightSrc: "HouseNight", isActive: false, isInitial: false});
+      if (tabs) {
+        updateCategory({
+          id: tabs.categories.length + 1,
+          title: newTabTitle,
+          src: "House",
+          nightSrc: "HouseNight",
+          isActive: false,
+          isInitial: false,
+        });
+        refetch();
       }
     } else if (task === "statistic") {
       setIsModalOpenStatistic(false);
@@ -111,51 +199,53 @@ export default function Aside() {
             <h1 className="text-2xl text-[#29A19C] font-semibold mb-[-10px]">
               Категории
             </h1>
-            {tabs && isSuccess ? tabs.categories.map((tab) => (
-              <div
-                className="flex items-center justify-between cursor-pointer "
-                key={tab.id}
-                onMouseEnter={() => {
-                  console.log(tab.id)
-                }}
-                onMouseLeave={() => {
-                  console.log(tab.id)
-                }}
-                onClick={() => updateCategory({id: tab.id, title: tab.title, src: tab.src, nightSrc: tab.nightSrc, isActive: true, isInitial: tab.isInitial})}
-              >
-                <div className="flex items-center gap-[10px]">
-                  <img
-                    className="w-[17px] duration-500 h-[17px]"
-                    src={theme ? tab?.nightSrc : tab?.src}
-                    alt=""
-                  />
-                  <h1
-                    className={
-                      "text-base duration-500 text-[#282846] font-normal " +
-                      (theme ? " text-[#F9F9F9]" : " ")
+            {tabs && isSuccess
+              ? tabs.categories.map((tab) => (
+                  <div
+                    className="flex items-center justify-between cursor-pointer "
+                    key={tab.id}
+                    onClick={() =>{
+                      if(!tab.isActive){
+                        activeCategory(tab.id);
+                        refetch();
+                      }
+                    }
                     }
                   >
-                    {tab.title}
-                  </h1>
-                </div>
-                {(tab.isActive) && (
-                  <div className="rounded-l-2xl bg-[#29A19C] w-[30px] h-[18px] flex items-center justify-center text-white">
-                    {" "}
-                    {!tab.isInitial ? (
-                      <DeleteOutlined
-                        style={{ width: "13px", height: "13px" }}
-                        onClick={() => {
-                          setDeleteTabId(tab.id - 1);
-                          showModal("delete");
-                        }}
+                    <div className="flex items-center gap-[10px]">
+                      <img
+                        className="w-[17px] duration-500 h-[17px]"
+                        src={getSrc(tab)}
+                        alt=""
                       />
-                    ) : (
-                      ""
+                      <h1
+                        className={
+                          "text-base duration-500 text-[#282846] font-normal " +
+                          (theme ? " text-[#F9F9F9]" : " ")
+                        }
+                      >
+                        {tab.title}
+                      </h1>
+                    </div>
+                    {tab.isActive && (
+                      <div className="rounded-l-2xl bg-[#29A19C] w-[30px] h-[18px] flex items-center justify-center text-white">
+                        {" "}
+                        {!tab.isInitial ? (
+                          <DeleteOutlined
+                            style={{ width: "13px", height: "13px" }}
+                            onClick={() => {
+                              setDeleteTabId(tab.id);
+                              showModal("delete");
+                            }}
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            )) : null}
+                ))
+              : null}
             <button
               className="cursor-pointer flex items-center gap-[10px]"
               onClick={() => showModal("add")}
@@ -242,10 +332,28 @@ export default function Aside() {
           },
         }}
       >
-        <AddCategory isModalOpen={isModalOpen} handleOk={() => handleOk("add")} handleCancel={() => handleCancel("add")} error={error} setError={setError} setNewTabTitle={setNewTabTitle} />
-        <DeleteCategory isModalOpenDelete={isModalOpenDelete} handleOk={() => handleOk("delete")} handleCancel={() => handleCancel("delete")} />
-        <StatisticModal isModalOpenStatistic={isModalOpenStatistic} handleCancel={() => handleCancel("statistic")} handleOk={() => handleOk("statistic")} />
-        <CompareModal isModalOpenCompare={isModalOpenCompare} handleCancel={() => handleCancel("compare")} />
+        <AddCategory
+          isModalOpen={isModalOpen}
+          handleOk={() => handleOk("add")}
+          handleCancel={() => handleCancel("add")}
+          error={error}
+          setError={setError}
+          setNewTabTitle={setNewTabTitle}
+        />
+        <DeleteCategory
+          isModalOpenDelete={isModalOpenDelete}
+          handleOk={() => handleOk("delete")}
+          handleCancel={() => handleCancel("delete")}
+        />
+        <StatisticModal
+          isModalOpenStatistic={isModalOpenStatistic}
+          handleCancel={() => handleCancel("statistic")}
+          handleOk={() => handleOk("statistic")}
+        />
+        <CompareModal
+          isModalOpenCompare={isModalOpenCompare}
+          handleCancel={() => handleCancel("compare")}
+        />
       </ConfigProvider>
     </div>
   );

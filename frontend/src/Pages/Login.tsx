@@ -16,7 +16,6 @@ export default function Login() {
   useEffect(() => {
       const localTheme = localStorage.getItem("nightMode");
       if(localTheme && theme !== JSON.parse(localTheme)) dispatch(toggleNightMode());
-      console.log("АЛО")
     }, []);
     useEffect(() => {
       localStorage.setItem("nightMode", JSON.stringify(theme));

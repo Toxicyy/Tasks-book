@@ -26,10 +26,11 @@ import { useAddTodoMutation} from "../../../state/todoListApi.slice";
 import { useGetUserQuery } from "../../../state/userApi.slice";
 import { updateTodo } from "../../../state/forceUpdate.slice";
 import { useGetTaskStatisticQuery, useUpdateTaskStatisticMutation } from "../../../state/taskStatisticApi.slice";
+import { useGetCategoriesQuery } from "../../../state/categoriesApi.slice";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
-  const tabs = useSelector((state: AppState) => state.tabs);
+  const {data: categoryData, isSuccess} = useGetCategoriesQuery();
   const modalState = useSelector((state: AppState) => state.addTodoModal);
   const dispatch = useDispatch<AppDispatch>();
   const [category, setCategory] = useState("Дом");
@@ -43,11 +44,6 @@ export default function Header() {
   const [updateTasks, {}] = useUpdateTaskStatisticMutation();
   const {data: taskStat} = useGetTaskStatisticQuery();
   const taskStatistic = taskStat?.statistic
-
-  useEffect(() => {console.log(currentUser)}, [currentUser]);
-  useEffect(() => {
-    console.log(theme, 1)
-  }, [theme])
 
   function handleSettingsOk() {
     setIsModalSettingsOpen(false);
@@ -80,7 +76,6 @@ export default function Header() {
       completed: false,
       category: category,
     }
-    console.log(todo)
     addTodoMutation(todo);
     if(taskStatistic){
       updateTasks({statistic: { ...taskStatistic, tasks: taskStatistic.tasks + 1 }});
@@ -182,7 +177,6 @@ export default function Header() {
                 }
                 onClick={() => {
                   dispatch(toggleNightMode()) 
-                  console.log(theme)
                 }}
               >
                 <img
@@ -341,12 +335,12 @@ export default function Header() {
           </h1>
           <Select
             dropdownStyle={{ background: theme ? "#222831" : "#FAFAFA" }}
-            defaultValue={tabs[0].title}
+            defaultValue={categoryData?.categories[0].title}
             style={{ width: 200, marginBottom: "20px" }}
             onChange={handleChange}
-            options={tabs.map((tab) => ({
-              value: tab.title,
-              label: tab.title,
+            options={categoryData?.categories.map((category) => ({
+              value: category.title,
+              label: category.title,
             }))}
           ></Select>
         </Modal>

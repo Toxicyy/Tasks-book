@@ -10,7 +10,7 @@ import { useGetTaskStatisticQuery, useUpdateTaskStatisticMutation } from "../../
 export default function Todo({ id, title }: { id: number; title: string }) {
   const dispatch = useDispatch<AppDispatch>();
   const {data: todoList} = useGetTodosQuery()
-  const {data: taskStat, isSuccess} = useGetTaskStatisticQuery();
+  const {data: taskStat} = useGetTaskStatisticQuery();
   const [editTodo] = useEditTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [updateTasks] = useUpdateTaskStatisticMutation();
@@ -24,13 +24,8 @@ export default function Todo({ id, title }: { id: number; title: string }) {
   const checked = todo ? todo.completed : false;
   const theme = useSelector((state: AppState) => state.nightMode.mode);
 
-  if(isSuccess && taskStatistic){
-    console.log(taskStatistic)
-  }
-
   const handleToggle = () => {
     if(todo){
-      console.log(taskStatistic)
       editTodo({ id, title: todo.title, completed: !todo.completed, category: todo.category });
       dispatch(updateTodo());
     }

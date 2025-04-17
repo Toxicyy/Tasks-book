@@ -18,7 +18,7 @@ export default function MainForm() {
   const [passError, setPassError] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string>("");
   const navigate = useNavigate();
-  const { isSuccess, isFetching } = useGetUserQuery();
+  const {data: user, isFetching } = useGetUserQuery();
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const beginWithoutDigit = /^\D.*$/;
@@ -49,12 +49,13 @@ export default function MainForm() {
     if (response.status === 201) {
       navigate("/login");
     }
-    console.log(status);
   }
 
-  if (isSuccess && !isFetching) {
-    navigate("/main");
-  }
+    useEffect(() => {
+      if (!isFetching && user?.user.username !== undefined) {
+        navigate("/main");
+      }
+    }, [user, isFetching, navigate]);
 
   return (
     <>

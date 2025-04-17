@@ -60,6 +60,12 @@ app.post("/register", (req, res) => {
       },
       todos: [],
       categories: [],
+      media: {
+        facebook: "",
+        twitter: "",
+        instagram: "",
+        linkedIn: "",
+      },
     },
   };
 
@@ -97,6 +103,33 @@ app.post("/login", (req, res) => {
   return res.status(200).json({ message: "Успешный вход", token });
 });
 
+app.delete("/api/delete/user", (req, res) => {
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    db.users = db.users.filter((user) => user.id !== decoded.id);
+    writeDatabase(db);
+
+    return res.status(200).json({ message: "Пользователь успешно удален" });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+});
+
 app.put("/api/update/user", (req, res) => {
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
@@ -126,7 +159,7 @@ app.put("/api/update/user", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
 app.get("/api/get/user", (req, res) => {
   const { authorization } = req.headers;
@@ -162,15 +195,77 @@ app.get("/api/checkToken", (req, res) => {
 
   try {
     jwt.verify(token, SECRET_KEY);
-    return res.status(200).json({ message: "Токен валиден", isTokenValid: true });
+    return res
+      .status(200)
+      .json({ message: "Токен валиден", isTokenValid: true });
   } catch (error) {
-    return res.status(401).json({ message: "Неверный или истекший токен", isTokenValid: false });
+    return res
+      .status(401)
+      .json({ message: "Неверный или истекший токен", isTokenValid: false });
   }
 });
 
+app.put("/api/changePassword", (req, res) => {
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { password } = req.body;
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    user.password = hashedPassword;
+
+    writeDatabase(db);
+
+    return res.status(200).json({ message: "Пароль успешно изменен" });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+});
+
+app.post("/api/user/checkPassword", (req, res) => {
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { password } = req.body;
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    if (isPasswordValid) {
+      return res.status(200).json({ message: "Пароль верен" });
+    } else {  
+      return res.status(401).json({ message: "Неверный пароль" });
+    }
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+  }
+);
+
 app.get("/user/username/:username", (req, res) => {
   const { username } = req.params;
-  console.log(username)
   const db = readDatabase();
 
   const user = db.users.find((user) => user.username === username);
@@ -229,11 +324,12 @@ app.post("/todos", (req, res) => {
   }
 
   if (!title || !category) {
-    return res.status(400).json({ message: "Название и категория задачи обязательны" });
+    return res
+      .status(400)
+      .json({ message: "Название и категория задачи обязательны" });
   }
 
   try {
-
     const decoded = jwt.verify(token, SECRET_KEY);
     const db = readDatabase();
 
@@ -303,7 +399,7 @@ app.put("/todos/:todoId", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
 app.delete("/todos/:todoId", (req, res) => {
   const { authorization } = req.headers;
@@ -324,7 +420,9 @@ app.delete("/todos/:todoId", (req, res) => {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
 
-    const todoIndex = user.data.todos.findIndex((todo) => todo.id === Number(todoId));
+    const todoIndex = user.data.todos.findIndex(
+      (todo) => todo.id === Number(todoId)
+    );
 
     if (todoIndex === -1) {
       return res.status(404).json({ message: "Задача не найдена" });
@@ -338,7 +436,7 @@ app.delete("/todos/:todoId", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
 app.get("/statistic", (req, res) => {
   const { authorization } = req.headers;
@@ -391,7 +489,7 @@ app.put("/statistic", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
 app.get("/category", (req, res) => {
   const { authorization } = req.headers;
@@ -414,8 +512,8 @@ app.get("/category", (req, res) => {
     return res.status(200).json({ categories: user.data.categories });
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
-  } 
-})
+  }
+});
 
 app.post("/category", (req, res) => {
   const { authorization } = req.headers;
@@ -442,7 +540,7 @@ app.post("/category", (req, res) => {
       nightSrc: category.nightSrc,
       title: category.title,
       isActive: category.isActive,
-      isInitial: category.isInitial
+      isInitial: category.isInitial,
     };
 
     user.data.categories.push(newCategory);
@@ -453,12 +551,73 @@ app.post("/category", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
+
+app.post("/category/initial", (req, res) => {
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+  const categories = req.body;
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    user.data = { ...user.data, categories };
+
+    writeDatabase(db);
+
+    return res.status(200).json({ message: "Категория успешно добавлена" });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+});
 
 app.put("/category", (req, res) => {
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
-  const { category } = req.body;
+  const category = req.body;
+  const { id } = req.body;
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    const index = user.data.categories.findIndex((cat) => cat.id === id);
+    if (index !== -1) {
+      user.data.categories[index] = category;
+    } else {
+      user.data.categories.push(category);
+    }
+
+    writeDatabase(db);
+
+    return res.status(200).json({ message: "Категория успешно обновлена" });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+});
+
+app.put("/category/makeActive", (req, res) => {
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
   const { id } = req.body;
 
   if (!token) {
@@ -467,7 +626,7 @@ app.put("/category", (req, res) => {
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    const db = readDatabase();  
+    const db = readDatabase();
 
     const user = db.users.find((user) => user.id === decoded.id);
 
@@ -475,7 +634,16 @@ app.put("/category", (req, res) => {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
 
-    user.data.categoryes[id] = category;
+    user.data.categories.forEach((category) => {
+      category.isActive = false;
+    });
+
+    const category = user.data.categories.find(
+      (category) => category.id === id
+    );
+    if (category) {
+      category.isActive = true;
+    }
 
     writeDatabase(db);
 
@@ -483,7 +651,7 @@ app.put("/category", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
 app.delete("/category", (req, res) => {
   const { authorization } = req.headers;
@@ -503,16 +671,16 @@ app.delete("/category", (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
-
-    user.data.categoryes.splice(id, 1);
-
+    user.data.categories = user.data.categories.filter(
+      (category) => category.id !== id
+    );
     writeDatabase(db);
 
     return res.status(200).json({ message: "Категория успешно удалена" });
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
 app.get("/check-username/:username", (req, res) => {
   const { username } = req.params;
@@ -530,6 +698,46 @@ app.get("/check-email/:email", (req, res) => {
   const emailTaken = db.users.some((user) => user.email === email);
 
   return res.status(200).json({ emailTaken });
+});
+
+app.get("/factOfTheDay", (req, res) => {
+  try{
+  const db = readDatabase();
+  const factOfTheDay = db.FactOfTheDay;
+  return res.status(200).json({ factOfTheDay });
+  }
+  catch(e){
+    return res.status(500).json({ message: "Произошла ошибка на сервере" });
+  }
+})
+
+app.put("/media", (req, res) => {
+  const { authorization } = req.headers;  
+  const token = authorization?.split("Bearer ")[1];
+  const media = req.body;
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    user.data.media = media;
+
+    writeDatabase(db);
+
+    return res.status(200).json({ message: "Медиа успешно обновлено" });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
 });
 
 app.listen(PORT, () => {

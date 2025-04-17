@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { nightModeSlice } from "./state/NightMode.slice";
-import { tabsSlice } from "./state/Tabs.slice";
 import { addTodoModalSlice } from "./state/AddTodoModal.slice";
 import { statisticOfWeekSlice } from "./state/StatisticOfWeek.slice";
 import { dropdownSlice } from "./state/Dropdown.slice";
@@ -14,7 +13,6 @@ import { categoriesApiSlice } from "./state/categoriesApi.slice";
 export const store = configureStore({
   reducer: {
     nightMode: nightModeSlice.reducer,
-    tabs: tabsSlice.reducer,
     addTodoModal: addTodoModalSlice.reducer,
     statisticOfWeek: statisticOfWeekSlice.reducer,
     dropdown: dropdownSlice.reducer,

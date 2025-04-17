@@ -18,11 +18,13 @@ export default function MainForm() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { isSuccess, isFetching } = useGetUserQuery();
+  const {data: user, isFetching} = useGetUserQuery();
 
-  if (isSuccess && !isFetching) {
-    navigate("/main");
-  }
+  useEffect(() => {
+    if (!isFetching && user?.user.username !== undefined) {
+      navigate("/main");
+    }
+  }, [user, isFetching, navigate]);
 
   async function handleClick(email: string, password: string) {
     const response = await login(email, password);

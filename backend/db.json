@@ -1,53 +1,17 @@
 {
   "users": [
     {
-      "id": "1",
-      "username": "John",
-      "email": "mail@example.com",
-      "password": "password123",
-      "avatarSrc": "",
-      "status": "USER",
-      "data": {
-        "statistics": {
-          "tasks": 0,
-          "completed": 0,
-          "deleted": 0,
-          "edited": 0
-        },
-        "tasks": [],
-        "completed": []
-      }
-    },
-    {
-      "id": "2",
-      "username": "John DoNot",
-      "email": "mail123@example.com",
-      "password": "password12345",
-      "avatarSrc": "",
-      "status": "USER",
-      "data": {
-        "statistics": {
-          "tasks": 0,
-          "completed": 0,
-          "deleted": 0,
-          "edited": 0
-        },
-        "tasks": [],
-        "completed": []
-      }
-    },
-    {
       "id": 1744651549380,
       "username": "Toxic",
       "email": "mail12345@gmail.com",
-      "password": "$2b$10$u2zwomf.A648W/zHzMElRerD.JF1OnIFFJXGAz/sw5reFi8F7KjBO",
+      "password": "$2b$10$lp9ePkgkNqVYRNPqNaKpP.wUMSUG6U7aNHEFVuVn258GeO3hJ8pVW",
       "avatarSrc": "",
       "status": "USER",
       "data": {
         "statistics": {
-          "tasks": 1,
-          "completed": 1,
-          "deleted": 4,
+          "tasks": 3,
+          "completed": 2,
+          "deleted": 5,
           "edited": 1
         },
         "todos": [
@@ -58,13 +22,58 @@
             "category": "Дом"
           },
           {
-            "id": 1744654681732,
-            "title": "Новенькая",
-            "completed": true,
+            "id": 1744881855319,
+            "title": "asfasasf",
+            "completed": false,
             "category": "Дом"
+          },
+          {
+            "id": 1744887132707,
+            "title": "БЛАБЛАБЛА",
+            "completed": true,
+            "category": "Работа"
           }
         ],
-        "categories": []
+        "categories": [
+          {
+            "id": 1,
+            "src": "House",
+            "nightSrc": "HouseNight",
+            "title": "Дом",
+            "isActive": true,
+            "isInitial": true
+          },
+          {
+            "id": 2,
+            "title": "Работа",
+            "src": "Work",
+            "nightSrc": "WorkNight",
+            "isActive": false,
+            "isInitial": true
+          },
+          {
+            "id": 3,
+            "title": "Семья",
+            "src": "Family",
+            "nightSrc": "FamilyNight",
+            "isActive": false,
+            "isInitial": true
+          },
+          {
+            "id": 4,
+            "src": "Sport",
+            "nightSrc": "SportNight",
+            "title": "Спорт",
+            "isActive": false,
+            "isInitial": true
+          }
+        ],
+        "media": {
+          "facebook": "https://www.facebook.com/blablabla",
+          "twitter": "https://twitter.com/blablabla",
+          "instagram": "https://www.instagram.com/blablabla",
+          "linkedIn": "https://fr.linkedIn.com/blablabla"
+        }
       }
     }
   ],
