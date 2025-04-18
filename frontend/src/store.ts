@@ -9,6 +9,7 @@ import { userApiSlice } from "./state/userApi.slice";
 import { forceUpdateSlice } from "./state/forceUpdate.slice";
 import { taskStatisticApiSlice } from "./state/taskStatisticApi.slice";
 import { categoriesApiSlice } from "./state/categoriesApi.slice";
+import { mediaApiSlice } from "./state/MediaApi.slice";
 
 export const store = configureStore({
   reducer: {
@@ -22,9 +23,15 @@ export const store = configureStore({
     userApi: userApiSlice.reducer,
     taskStatisticApi: taskStatisticApiSlice.reducer,
     categoriesApi: categoriesApiSlice.reducer,
+    mediaApi: mediaApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(todoListApiSlice.middleware).concat(userApiSlice.middleware).concat(taskStatisticApiSlice.middleware).concat(categoriesApiSlice.middleware),
+    getDefaultMiddleware()
+      .concat(todoListApiSlice.middleware)
+      .concat(userApiSlice.middleware)
+      .concat(taskStatisticApiSlice.middleware)
+      .concat(categoriesApiSlice.middleware)
+      .concat(mediaApiSlice.middleware),
 });
 
 export type AppState = ReturnType<typeof store.getState>;

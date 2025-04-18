@@ -31,7 +31,7 @@ export default function Time() {
     };
 
     return (
-        <div className={"w-[36.3vw] min-w-[227px] shadow-xl rounded-xl p-[20px] flex flex-col duration-500 gap-[20px] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
+        <div className={"w-[55vw] min-w-[227px] shadow-xl rounded-xl p-[20px] flex flex-col duration-500 gap-[20px] xl:w-[37.4vw] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
             <h1 className="font-semibold text-2xl text-[#29A19C]">Такс такс такс</h1>
             <div className="flex justify-between flex-wrap">
                 <div className="">

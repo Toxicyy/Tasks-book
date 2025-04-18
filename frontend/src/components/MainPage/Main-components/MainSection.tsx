@@ -7,7 +7,7 @@ import TodoList from "./TodoList";
 
 export default function MainSection() {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-center flex-wrap xl:justify-between">
       <div className="flex flex-col gap-[30px]">
         <Stats />
         <TodoList />

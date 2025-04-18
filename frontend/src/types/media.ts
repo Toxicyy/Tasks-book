@@ -4,3 +4,7 @@ export type Media = {
     instagram: string;
     linkedIn: string;
 }
+
+export type MediaState = {
+    media: Media
+}

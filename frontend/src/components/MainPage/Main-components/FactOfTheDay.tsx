@@ -18,7 +18,7 @@ export default function FactOfTheDay() {
   }, []);
 
   return (
-    <div className={"w-[36.3vw] shadow-xl duration-500 rounded-xl p-[20px] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
+    <div className={"w-[55vw] shadow-xl duration-500 rounded-xl p-[20px] xl:w-[37.4vw] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
       <h1 className="font-semibold text-2xl text-[#29A19C] mb-[20px]">
         Факт дня
       </h1>

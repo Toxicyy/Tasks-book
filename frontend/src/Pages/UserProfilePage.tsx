@@ -40,7 +40,7 @@ export default function UserProfilePage() {
   return (
     <div
       className={
-        "flex duration-500 pb-[284px] " +
+        "flex duration-500 xl:pb-[258px] lg:pb-[50px] " +
         (theme ? " bg-[#222831]" : "bg-[#FAFAFA]")
       }
     >

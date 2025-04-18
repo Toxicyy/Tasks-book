@@ -4,11 +4,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const multer = require('multer');
 
 const app = express();
 const PORT = 5000;
 const DB_PATH = "./db.json";
 const SECRET_KEY = "secret_key";
+const upload = multer({ dest: 'uploads/' });
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -97,7 +99,7 @@ app.post("/login", (req, res) => {
   }
 
   const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: "7d",
   });
 
   return res.status(200).json({ message: "Успешный вход", token });
@@ -739,6 +741,57 @@ app.put("/media", (req, res) => {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
 });
+
+app.get("/media", (req, res) => {
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const db = readDatabase();
+
+    const user = db.users.find((user) => user.id === decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    return res.status(200).json({ media: user.data.media });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+})
+
+app.post('/api/upload-avatar', upload.single('avatar'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ success: false, error: 'Файл не получен' });
+  const {authorization} = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Токен не предоставлен" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const avatarPath = req.file.path;
+    const db = readDatabase();
+    const user = db.users.find((user) => user.id === decoded.id);
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'Пользователь не найден' });
+    }
+    user.avatarSrc = avatarPath;
+    writeDatabase(db);
+    res.json({ success: true, avatarPath });
+  } catch (error) {
+    return res.status(401).json({ message: "Неверный или истекший токен" });
+  }
+});
+
+app.use('/uploads', express.static('uploads'));
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);

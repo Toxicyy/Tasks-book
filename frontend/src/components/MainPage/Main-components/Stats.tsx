@@ -13,7 +13,7 @@ export default function Stats() {
     refetch();
   }, [updateTodo]);
   return (
-    <div className={"w-[36.3vw] shadow-xl rounded-xl duration-500 p-[20px] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
+    <div className={"w-[55vw] shadow-xl rounded-xl duration-500 p-[20px] xl:w-[36.3vw] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
       <h1 className="font-semibold duration-500 text-xl text-[#29A19C] mb-[20px]">Успехи за неделю</h1>
       <div className="flex justify-between flex-wrap">
         <div className="flex flex-col items-center justify-center gap-[10px]">

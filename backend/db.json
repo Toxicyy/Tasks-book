@@ -5,33 +5,33 @@
       "username": "Toxic",
       "email": "mail12345@gmail.com",
       "password": "$2b$10$lp9ePkgkNqVYRNPqNaKpP.wUMSUG6U7aNHEFVuVn258GeO3hJ8pVW",
-      "avatarSrc": "",
+      "avatarSrc": "uploads\\3a563c919e92a9d3ad7c97615326c446",
       "status": "USER",
       "data": {
         "statistics": {
           "tasks": 3,
-          "completed": 2,
-          "deleted": 5,
-          "edited": 1
+          "completed": 1,
+          "deleted": 0,
+          "edited": 0
         },
         "todos": [
           {
-            "id": 1744654280690,
-            "title": "NEWNENWewe",
+            "id": 1744988293800,
+            "title": "Помыть посуду",
             "completed": false,
             "category": "Дом"
           },
           {
-            "id": 1744881855319,
-            "title": "asfasasf",
+            "id": 1744988302099,
+            "title": "Пропылесосить",
             "completed": false,
             "category": "Дом"
           },
           {
-            "id": 1744887132707,
-            "title": "БЛАБЛАБЛА",
+            "id": 1744988307989,
+            "title": "Развесить белье",
             "completed": true,
-            "category": "Работа"
+            "category": "Дом"
           }
         ],
         "categories": [

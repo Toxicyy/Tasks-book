@@ -30,7 +30,7 @@ export default function TodoList() {
   }, [category]);
 
   return (
-    <div className={"w-[36.3vw] shadow-xl duration-500 rounded-xl p-[20px] flex flex-col gap-[20px] mb-[30px] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
+    <div className={"w-[55vw] shadow-xl duration-500 rounded-xl p-[20px] flex flex-col gap-[20px] mb-[30px] xl:w-[36.3vw] " + (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")}>
       <div className="">
         <h1 className="font-semibold text-xl text-[#29A19C] mb-[20px]">
           Активные задачи

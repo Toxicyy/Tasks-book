@@ -7,12 +7,15 @@ import { useEffect, useState } from "react";
 import { CheckOutlined } from "@ant-design/icons";
 import Facebook from "../../../images/loginPage/facebook.png";
 import Twitter from "../../../images/loginPage/twitter.png";
+import Instagram from "../../../images/loginPage/instagram.png";
+import LinkedIn from "../../../images/loginPage/linkedIn.png";
 import usernameVerification from "../../../authentification/usernameVerification";
 import userEmailVerification from "../../../authentification/userEmailVerification";
 import {
   useGetUserQuery,
   useUpdateUserMutation,
 } from "../../../state/userApi.slice";
+import { useGetMediaQuery } from "../../../state/MediaApi.slice";
 
 export default function UserForm() {
   const { data: currentUser, refetch } = useGetUserQuery();
@@ -24,8 +27,26 @@ export default function UserForm() {
   const [fetchError, setFetchError] = useState(false);
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const [updateUser, {}] = useUpdateUserMutation();
+  const {data: media, isLoading, refetch: refetchMedia} = useGetMediaQuery();
+  const [avatar, setAvatar] = useState(Anonym);  
+  const [avatarFile, setAvatarFile] = useState(null);
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleFileChange = (file: any) => {
+    if (file) {
+      setAvatar(URL.createObjectURL(file));
+      setAvatarFile(file);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser?.user.avatarSrc) {
+      setAvatar(`http://localhost:5000/${currentUser.user.avatarSrc}`);
+    } else {
+      setAvatar(Anonym);
+    }
+  }, [currentUser]);
 
   async function handleClick() {
     if (newName) {
@@ -65,6 +86,22 @@ export default function UserForm() {
         }
       }
     }
+    if (avatarFile) {
+      const formData = new FormData();
+      const token = localStorage.getItem("token");
+      formData.append("avatar", avatarFile);
+      try {
+        await fetch("http://localhost:5000/api/upload-avatar", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
     refetch()
     return;
   }
@@ -74,6 +111,9 @@ export default function UserForm() {
     setNewEmail(currentUser?.user.email);
   }, [currentUser]);
 
+  useEffect(() => {
+    refetchMedia();
+  }, [media]);
   function handleToggle() {
     setChecked(!checked);
   }
@@ -81,21 +121,21 @@ export default function UserForm() {
   return (
     <div
       className={
-        "w-[37.4vw] min-w[300px] flex shadow-xl rounded-xl p-[20px] justify-between duration-500 flex-wrap mb-[30px] " +
+        "w-[55vw] min-w[300px] flex shadow-xl rounded-xl p-[20px] justify-center gap-[60px] duration-500 flex-wrap mb-[30px] xl:w-[37.4vw] md:justify-normal " +
         (theme ? " bg-[#2C3440]" : "bg-[#FFFFFF]")
       }
     >
       <div className="flex flex-col items-center">
         <img
           className="w-[150px] h-[150px] rounded-[75px]"
-          src={Anonym}
+          src={avatar}
           alt="Avatar"
         />
         <div className="cursor-pointer">
-          <FileUpload />
+          <FileUpload onFileChange={handleFileChange} />
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[60%]">
         <h1
           className={
             "font-semibold text-[16px] mb-[10px] " +
@@ -110,7 +150,7 @@ export default function UserForm() {
           style={
             theme
               ? {
-                  width: "23vw",
+                  width: 'full',
                   height: "44px",
                   background: "#222831",
                   border: "1px solid #29A19C",
@@ -118,7 +158,7 @@ export default function UserForm() {
                   marginBottom: "30px",
                 }
               : {
-                  width: "23vw",
+                  width: "full",
                   background: "#FAFAFA",
                   marginBottom: "30px",
                   height: "44px",
@@ -146,7 +186,7 @@ export default function UserForm() {
           style={
             theme
               ? {
-                  width: "23vw",
+                  width: "full",
                   height: "44px",
                   background: "#222831",
                   border: "1px solid #29A19C",
@@ -154,7 +194,7 @@ export default function UserForm() {
                   marginBottom: "10px",
                 }
               : {
-                  width: "23vw",
+                  width: "full",
                   background: "#FAFAFA",
                   marginBottom: "10px",
                   height: "44px",
@@ -195,20 +235,26 @@ export default function UserForm() {
         >
           Ваши социальные сети:
         </h1>
-        <div className="flex gap-[20px] mb-[30px]">
-          <a href="">
+        {(media && !isLoading) ? <div className="flex gap-[20px] mb-[30px]">
+          {media.media.facebook && <a href={media.media.facebook}>
             <img className="w-[32px] h-[32px]" src={Facebook} alt="" />
-          </a>
-          <a href="">
+          </a>}
+          {media.media.twitter && <a href={media.media.twitter}>
             <img className="w-[32px] h-[32px]" src={Twitter} alt="" />
-          </a>
-        </div>
+          </a>}
+          {media.media.instagram && <a href={media.media.instagram}>
+            <img className="w-[32px] h-[32px]" src={Instagram} alt="" />
+          </a>}
+          {media.media.linkedIn && <a href={media.media.linkedIn}>
+            <img className="w-[32px] h-[32px]" src={LinkedIn} alt="" />
+          </a>}
+        </div> : <h1 className="text-gray-400 text-sm mt-[-10px] mb-[15px]">пока что вы не добавили социальные сети...</h1>}
         <Button
           type="primary"
           htmlType="button"
           style={{
             backgroundColor: "#29A19C",
-            width: "250px",
+            width: "20vw",
             height: "44px",
             borderRadius: "10px",
           }}
@@ -216,7 +262,7 @@ export default function UserForm() {
         >
           {" "}
           <p className="text-[16px] font-semibold tracking-wider">
-            Сохранить изменения
+            Сохранить
           </p>
         </Button>
       </div>

@@ -3,11 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 type ForceUpdateState = {
     todoUpdate: boolean;
     statisticUpdate: boolean;
+    avatarUpdate: boolean
 }
 
 const initialState: ForceUpdateState = {
     todoUpdate: false,
-    statisticUpdate: false
+    statisticUpdate: false,
+    avatarUpdate: false
 }
 
 export const forceUpdateSlice = createSlice({
@@ -19,6 +21,6 @@ export const forceUpdateSlice = createSlice({
     }
 })
 
-export const { updateTodo, updateStatistic } = forceUpdateSlice.actions
+export const { updateTodo, updateStatistic} = forceUpdateSlice.actions
 
 export default forceUpdateSlice.reducer

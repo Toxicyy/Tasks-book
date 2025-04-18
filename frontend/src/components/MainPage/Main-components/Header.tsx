@@ -30,7 +30,7 @@ import { useGetCategoriesQuery } from "../../../state/categoriesApi.slice";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
-  const {data: categoryData, isSuccess} = useGetCategoriesQuery();
+  const {data: categoryData} = useGetCategoriesQuery();
   const modalState = useSelector((state: AppState) => state.addTodoModal);
   const dispatch = useDispatch<AppDispatch>();
   const [category, setCategory] = useState("Дом");
@@ -44,6 +44,15 @@ export default function Header() {
   const [updateTasks, {}] = useUpdateTaskStatisticMutation();
   const {data: taskStat} = useGetTaskStatisticQuery();
   const taskStatistic = taskStat?.statistic
+  const [avatar, setAvatar] = useState(Anonym);
+
+  useEffect(() => {
+    if (currentUser?.user.avatarSrc) {
+      setAvatar(`http://localhost:5000/${currentUser.user.avatarSrc}`);
+    } else {
+      setAvatar(Anonym);
+    }
+  }, [currentUser]);
 
   function handleSettingsOk() {
     setIsModalSettingsOpen(false);
@@ -92,7 +101,7 @@ export default function Header() {
   };
   return (
     <div className="">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-center gap-[14vw] xl:justify-between xl:gap-0">
         <Button
           type="primary"
           style={{ width: "186px", height: "42px", background: "#29A19C" }}
@@ -102,7 +111,7 @@ export default function Header() {
           <h1 className="text-base font-semibold">Новая задача</h1>
         </Button>
         <img
-          className="w-[27px] h-[27px] duration-500"
+          className="w-[27px] h-[27px] duration-500 max-xl:hidden"
           src={theme ? BlackTheme : WhiteTheme}
           alt=""
         />
@@ -118,7 +127,7 @@ export default function Header() {
           </h1>
           <img
             className="w-[45px] h-[45px] rounded-4xl"
-            src={Anonym}
+            src={avatar}
             alt="Avatar"
           />
           <div
@@ -137,7 +146,7 @@ export default function Header() {
       {isDropDown && (
         <div
           className={
-            "relative flex justify-end transition-opacity duration-500 " +
+            "relative flex justify-center ml-[40vw] xl:ml-0 xl:justify-end transition-opacity duration-500  " +
             (isDropDown ? "opacity-100" : "opacity-0")
           }
         >

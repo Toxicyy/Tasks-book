@@ -6,6 +6,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { newApi } from "../../shared/api";
 import { useNavigate } from "react-router-dom";
 import { userApiSlice } from "../../state/userApi.slice";
+import { mediaApiSlice } from "../../state/MediaApi.slice";
 
 type Props = {
   isModalOpen: boolean;
@@ -28,6 +29,39 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
   const [regExpError, setRegExpError] = useState<string>("");
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const [deleteButtonHover, setDeleteButtonHover] = useState<boolean>(false);
+  const [exitButtonHover, setExitButtonHover] = useState<boolean>(false);
+  const [confirmButtonHover, setConfirmButtonHover] = useState<boolean>(false);
+
+  const baseStyle = { width: "120px", height: "30px" };
+
+  const themeStyle = !theme
+    ? baseStyle
+    : {
+        ...baseStyle,
+        backgroundColor: "transparent",
+        borderColor: "white",
+        color: "white",
+      };
+
+  const hoverStyle = {
+    color: "#FA541C",
+    borderColor: "#FA541C",
+    width: "125px",
+    height: "33px",
+  };
+
+  const buttonStyle = deleteButtonHover
+    ? { ...themeStyle, ...hoverStyle }
+    : themeStyle;
+
+  const exitButtonStyle = exitButtonHover
+    ? { ...themeStyle, ...hoverStyle }
+    : themeStyle;
+
+  const confirmButtonStyle = confirmButtonHover
+    ? { ...themeStyle, ...hoverStyle }
+    : themeStyle;
 
   const beginWithoutDigit = /^\D.*$/;
   const withoutSpecialChars = /^[^-() /]*$/;
@@ -37,11 +71,12 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
   const facebookRegex = /^https?:\/\/(www\.)?facebook\.com\/[a-zA-Z0-9_.-]+$/;
   const twitterRegex = /^https?:\/\/(www\.)?twitter\.com\/[a-zA-Z0-9_.-]+$/;
   const instagramRegex = /^https?:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9_.-]+$/;
-  const linkedInRegex = /^https?:\/\/(www\.)?fr\.linkedin\.com\/[a-zA-Z0-9_.-]+$/;
+  const linkedInRegex =
+    /^https?:\/\/(www\.)?fr\.linkedin\.com\/[a-zA-Z0-9_.-]+$/;
 
   async function handleOkDelete() {
-    const response = await newApi.deleteUser( localStorage.getItem("token")! );
-    if(response.ok) {
+    const response = await newApi.deleteUser(localStorage.getItem("token")!);
+    if (response.ok) {
       localStorage.removeItem("token");
       dispatch(userApiSlice.util.resetApiState());
       navigate("/login");
@@ -54,45 +89,47 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
   }
 
   function mediaCheck() {
-    if(facebook){
-      if(!facebookRegex.test(facebook)) {
+    if (facebook) {
+      if (!facebookRegex.test(facebook)) {
         setRegExpError("facebook");
         return;
       }
     }
-    if(twitter){
-      if(!twitterRegex.test(twitter)) {
+    if (twitter) {
+      if (!twitterRegex.test(twitter)) {
         setRegExpError("twitter");
         return;
       }
     }
-    if(instagram){
-      if(!instagramRegex.test(instagram)) {
+    if (instagram) {
+      if (!instagramRegex.test(instagram)) {
         setRegExpError("instagram");
         return;
       }
     }
-    if(linkedIn){
-      if(!linkedInRegex.test(linkedIn)) {
+    if (linkedIn) {
+      if (!linkedInRegex.test(linkedIn)) {
         setRegExpError("linkedIn");
         return;
       }
     }
   }
 
-
   async function handleSaveMedia() {
     const token = localStorage.getItem("token");
     if (token) {
       mediaCheck();
-      if( regExpError ) return;
+      if (regExpError) return;
       const media = {
         facebook: facebook,
         twitter: twitter,
         instagram: instagram,
-        linkedIn: linkedIn
+        linkedIn: linkedIn,
+      };
+      const response = await newApi.updateMedia(token, media);
+      if(response.ok) {
+        dispatch(mediaApiSlice.util.resetApiState());
       }
-      await newApi.updateMedia(token, media);
     }
   }
 
@@ -100,27 +137,27 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
     const token = localStorage.getItem("token");
     if (newPassword.length < 8) {
       setNewPassError("Пароль должен быть не меньше 8 символов");
-      return
+      return;
     }
     if (!beginWithoutDigit.test(newPassword)) {
       setNewPassError("Пароль должен начинаться с буквы");
-      return
+      return;
     }
     if (!withoutSpecialChars.test(newPassword)) {
       setNewPassError("Пароль не должен содержать специальных символов");
-      return
+      return;
     }
     if (!containsLetters.test(newPassword)) {
       setNewPassError("Пароль должен содержать хотя бы одну букву");
-      return
+      return;
     }
     if (!withoutSpaces.test(newPassword)) {
       setNewPassError("Пароль не должен содержать пробелов");
-      return
+      return;
     }
     if (newPassword === oldPassword) {
       setNewPassError("Новый пароль не должен совпадать с старым");
-      return
+      return;
     }
     if (token) {
       const response = await newApi.checkPassword(token, oldPassword);
@@ -143,7 +180,14 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={
-          <Button type="dashed" danger onClick={handleOk}>
+          <Button
+            type="dashed"
+            danger
+            onClick={handleOk}
+            style={exitButtonStyle}
+            onMouseEnter={() => setExitButtonHover(true)}
+            onMouseLeave={() => setExitButtonHover(false)}
+          >
             <p className="tracking-widest">Вернуться</p>
           </Button>
         }
@@ -179,7 +223,9 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
               visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
             }
           />
-          {error && <p className=" text-xs font-semibold text-red-500">{error}</p>}
+          {error && (
+            <p className=" text-xs font-semibold text-red-500">{error}</p>
+          )}
           <Input.Password
             className="custom-input-login"
             style={
@@ -225,11 +271,7 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
             }
           />
           {newPassError && (
-            <p
-              className="text-xs font-semibold text-red-500"
-            >
-              {newPassError}
-            </p>
+            <p className="text-xs font-semibold text-red-500">{newPassError}</p>
           )}
           {error && (
             <p
@@ -266,13 +308,28 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
           <h1
             className={
               "text-md font-semibold " +
-              (theme ? " text-white" : " text-[#282846]")
+              (theme ? " text-[#29A19C]" : " text-[#282846]")
             }
           >
             Facebook
           </h1>
           <Input
-            style={{ width: "310px", marginBottom: "10px" }}
+            className="custom-input-login"
+            style={
+              theme
+                ? {
+                    width: "310px",
+                    background: "#222831",
+                    border: "1px solid #29A19C",
+                    color: "#29A19C",
+                    marginBottom: "10px",
+                  }
+                : {
+                    width: "310px",
+                    background: "#FAFAFA",
+                    marginBottom: "10px",
+                  }
+            }
             placeholder="https://www.facebook.com/ваша_страница"
             onChange={(e) => {
               setFacebook(e.target.value);
@@ -280,37 +337,71 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
             status={regExpError === "facebook" ? "error" : ""}
           ></Input>
           {regExpError === "facebook" && (
-            <p className="text-xs font-semibold text-red-500">Неверный формат ссылки</p>
+            <p className="text-xs font-semibold text-red-500">
+              Неверный формат ссылки
+            </p>
           )}
           <h1
             className={
               "text-md font-semibold " +
-              (theme ? " text-white" : " text-[#282846]")
+              (theme ? " text-[#29A19C]" : " text-[#282846]")
             }
           >
             Twitter
           </h1>
           <Input
-            style={{ width: "310px", marginBottom: "10px" }}
+            className="custom-input-login"
+            style={
+              theme
+                ? {
+                    width: "310px",
+                    background: "#222831",
+                    border: "1px solid #29A19C",
+                    color: "#29A19C",
+                    marginBottom: "10px",
+                  }
+                : {
+                    width: "310px",
+                    background: "#FAFAFA",
+                    marginBottom: "10px",
+                  }
+            }
             placeholder="https://twitter.com/ваша_страница"
             onChange={(e) => {
               setTwitter(e.target.value);
-            }}  
+            }}
             status={regExpError === "twitter" ? "error" : ""}
           ></Input>
           {regExpError === "twitter" && (
-            <p className="text-xs font-semibold text-red-500">Неверный формат ссылки</p>
+            <p className="text-xs font-semibold text-red-500">
+              Неверный формат ссылки
+            </p>
           )}
           <h1
             className={
               "text-md font-semibold " +
-              (theme ? " text-white" : " text-[#282846]")
+              (theme ? " text-[#29A19C]" : " text-[#282846]")
             }
           >
             Instagram
           </h1>
           <Input
-            style={{ width: "310px", marginBottom: "10px" }}
+            className="custom-input-login"
+            style={
+              theme
+                ? {
+                    width: "310px",
+                    background: "#222831",
+                    border: "1px solid #29A19C",
+                    color: "#29A19C",
+                    marginBottom: "10px",
+                  }
+                : {
+                    width: "310px",
+                    background: "#FAFAFA",
+                    marginBottom: "10px",
+                  }
+            }
             placeholder="https://www.instagram.com/ваша_страница"
             onChange={(e) => {
               setInstagram(e.target.value);
@@ -318,18 +409,35 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
             status={regExpError === "instagram" ? "error" : ""}
           ></Input>
           {regExpError === "instagram" && (
-            <p className="text-xs font-semibold text-red-500">Неверный формат ссылки</p>
+            <p className="text-xs font-semibold text-red-500">
+              Неверный формат ссылки
+            </p>
           )}
           <h1
             className={
               "text-md font-semibold " +
-              (theme ? " text-white" : " text-[#282846]")
+              (theme ? " text-[#29A19C]" : " text-[#282846]")
             }
           >
             LinkedIn
           </h1>
           <Input
-            style={{ width: "310px", marginBottom: "10px" }}
+            className="custom-input-login"
+            style={
+              theme
+                ? {
+                    width: "310px",
+                    background: "#222831",
+                    border: "1px solid #29A19C",
+                    color: "#29A19C",
+                    marginBottom: "10px",
+                  }
+                : {
+                    width: "310px",
+                    background: "#FAFAFA",
+                    marginBottom: "10px",
+                  }
+            }
             placeholder="https://fr.linkedin.com/ваша_страница"
             onChange={(e) => {
               setLinkedIn(e.target.value);
@@ -337,7 +445,9 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
             status={regExpError === "linkedin" ? "error" : ""}
           ></Input>
           {regExpError === "linkedin" && (
-            <p className="text-xs font-semibold text-red-500">Неверный формат ссылки</p>
+            <p className="text-xs font-semibold text-red-500">
+              Неверный формат ссылки
+            </p>
           )}
           <br />
           <Button
@@ -356,7 +466,9 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
           <Button
             type="dashed"
             danger
-            style={{ width: "120px", height: "30px" }}
+            style={buttonStyle}
+            onMouseEnter={() => setDeleteButtonHover(true)}
+            onMouseLeave={() => setDeleteButtonHover(false)}
             onClick={() => setIsModalOpenDelete(true)}
           >
             Удалить аккаунт
@@ -371,7 +483,14 @@ const SettingsModal: FC<Props> = ({ isModalOpen, handleOk, handleCancel }) => {
         style={{ marginTop: "260px" }}
         footer={
           <>
-            <Button type="dashed" danger onClick={handleCancelDelete}>
+            <Button
+              type="dashed"
+              danger
+              onClick={handleCancelDelete}
+              style={confirmButtonStyle}
+              onMouseEnter={() => setConfirmButtonHover(true)}
+              onMouseLeave={() => setConfirmButtonHover(false)}
+            >
               <p className="tracking-widest">Вернуться</p>
             </Button>
             <Button
