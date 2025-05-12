@@ -21,10 +21,11 @@ export default function MainForm() {
   const {data: user, isFetching} = useGetUserQuery();
 
   useEffect(() => {
-    if (!isFetching && user?.user.username !== undefined) {
+    if(user){
       navigate("/main");
     }
-  }, [user, isFetching, navigate]);
+  }, [user, navigate]);
+
 
   async function handleClick(email: string, password: string) {
     const response = await login(email, password);

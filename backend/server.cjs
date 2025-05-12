@@ -4,13 +4,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const multer = require('multer');
+const multer = require("multer");
 
 const app = express();
 const PORT = 5000;
 const DB_PATH = "./db.json";
 const SECRET_KEY = "secret_key";
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -61,7 +61,40 @@ app.post("/register", (req, res) => {
         edited: 0,
       },
       todos: [],
-      categories: [],
+      categories: [
+        {
+          id: 1,
+          src: "House",
+          nightSrc: "HouseNight",
+          title: "Дом",
+          isActive: true,
+          isInitial: true,
+        },
+        {
+          id: 2,
+          src: "Work",
+          nightSrc: "WorkNight",
+          title: "Работа",
+          isActive: false,
+          isInitial: true,
+        },
+        {
+          id: 3,
+          src: "Family",
+          nightSrc: "FamilyNight",
+          title: "Семья",
+          isActive: false,
+          isInitial: true,
+        },
+        {
+          id: 4,
+          src: "Sport",
+          nightSrc: "SportNight",
+          title: "Спорт",
+          isActive: false,
+          isInitial: true,
+        },
+      ],
       media: {
         facebook: "",
         twitter: "",
@@ -257,14 +290,13 @@ app.post("/api/user/checkPassword", (req, res) => {
     const isPasswordValid = bcrypt.compareSync(password, user.password);
     if (isPasswordValid) {
       return res.status(200).json({ message: "Пароль верен" });
-    } else {  
+    } else {
       return res.status(401).json({ message: "Неверный пароль" });
     }
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-  }
-);
+});
 
 app.get("/user/username/:username", (req, res) => {
   const { username } = req.params;
@@ -673,9 +705,22 @@ app.delete("/category", (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
+    const deletedCategory = user.data.categories.find(
+      (category) => category.id === id
+    );
     user.data.categories = user.data.categories.filter(
       (category) => category.id !== id
     );
+    // КОСЯЯЯЯЯК
+
+    try {
+      user.data.todos = user.data.todos.filter(
+        (todo) => todo.category !== deletedCategory.title
+      );
+    } catch (e) {
+      console.log(e);
+    }
+
     writeDatabase(db);
 
     return res.status(200).json({ message: "Категория успешно удалена" });
@@ -703,18 +748,17 @@ app.get("/check-email/:email", (req, res) => {
 });
 
 app.get("/factOfTheDay", (req, res) => {
-  try{
-  const db = readDatabase();
-  const factOfTheDay = db.FactOfTheDay;
-  return res.status(200).json({ factOfTheDay });
-  }
-  catch(e){
+  try {
+    const db = readDatabase();
+    const factOfTheDay = db.FactOfTheDay;
+    return res.status(200).json({ factOfTheDay });
+  } catch (e) {
     return res.status(500).json({ message: "Произошла ошибка на сервере" });
   }
-})
+});
 
 app.put("/media", (req, res) => {
-  const { authorization } = req.headers;  
+  const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
   const media = req.body;
 
@@ -764,11 +808,12 @@ app.get("/media", (req, res) => {
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
   }
-})
+});
 
-app.post('/api/upload-avatar', upload.single('avatar'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ success: false, error: 'Файл не получен' });
-  const {authorization} = req.headers;
+app.post("/api/upload-avatar", upload.single("avatar"), async (req, res) => {
+  if (!req.file)
+    return res.status(400).json({ success: false, error: "Файл не получен" });
+  const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
 
   if (!token) {
@@ -781,7 +826,9 @@ app.post('/api/upload-avatar', upload.single('avatar'), async (req, res) => {
     const db = readDatabase();
     const user = db.users.find((user) => user.id === decoded.id);
     if (!user) {
-      return res.status(404).json({ success: false, error: 'Пользователь не найден' });
+      return res
+        .status(404)
+        .json({ success: false, error: "Пользователь не найден" });
     }
     user.avatarSrc = avatarPath;
     writeDatabase(db);
@@ -791,7 +838,7 @@ app.post('/api/upload-avatar', upload.single('avatar'), async (req, res) => {
   }
 });
 
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);

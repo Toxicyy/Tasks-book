@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import logo from "../../images/mainPage/header/logo.png";
-import { AppState } from "../../store";
+import { AppDispatch, AppState } from "../../store";
 import { ConfigProvider } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import CompareModal from "./Main-components/modals/CompareModal";
 import StatisticModal from "./Main-components/modals/StatisticModal";
 import DeleteCategory from "./Main-components/modals/DeleteCategory";
 import {
+  categoriesApiSlice,
   useDeleteCategoryMutation,
   useGetCategoriesQuery,
   useInitialCategoriesMutation,
@@ -32,13 +33,16 @@ import HouseNight from "../../images/DarkTheme/mainPage/aside/HouseNight.png";
 import FamilyNight from "../../images/DarkTheme/mainPage/aside/FamilyNight.png";
 import WorkNight from "../../images/DarkTheme/mainPage/aside/WorkNight.png";
 import SportNight from "../../images/DarkTheme/mainPage/aside/SportNight.png";
+import { userApiSlice } from "../../state/userApi.slice";
+import { updateTodo } from "../../state/forceUpdate.slice";
+import { todoListApiSlice } from "../../state/todoListApi.slice";
+import { taskStatisticApiSlice } from "../../state/taskStatisticApi.slice";
 
 export default function Aside() {
   const { data: tabs, isSuccess, refetch } = useGetCategoriesQuery();
   const [activeCategory] = useMakeCategoryActiveMutation();
   const [updateCategory] = useUpdateCategoryMutation();
   const [deleteCategory] = useDeleteCategoryMutation();
-  const [initialCategories] = useInitialCategoriesMutation();
   const theme = useSelector((state: AppState) => state.nightMode.mode);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
@@ -47,52 +51,15 @@ export default function Aside() {
   const [newTabTitle, setNewTabTitle] = useState("");
   const [error, setError] = useState("");
   const [deleteTabId, setDeleteTabId] = useState(-1);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (tabs?.categories.length === 0) {
-      initialCategories([
-        {
-          id: 1,
-          src: "House",
-          nightSrc: "HouseNight",
-          title: "Дом",
-          isActive: true,
-          isInitial: true,
-        },
-        {
-          id: 2,
-          src: "Work",
-          nightSrc: "WorkNight",
-          title: "Работа",
-          isActive: false,
-          isInitial: true,
-        },
-        {
-          id: 3,
-          src: "Family",
-          nightSrc: "FamilyNight",
-          title: "Семья",
-          isActive: false,
-          isInitial: true,
-        },
-        {
-          id: 4,
-          src: "Sport",
-          nightSrc: "SportNight",
-          title: "Спорт",
-          isActive: false,
-          isInitial: true,
-        },
-      ]);
-      refetch();
-    }
-    activeCategory(1);
-    refetch();
-  }, [isSuccess]);
 
   const logOut = () => {
     localStorage.removeItem("token");
+    dispatch(userApiSlice.util.resetApiState());
+    dispatch(todoListApiSlice.util.resetApiState());
+    dispatch(categoriesApiSlice.util.resetApiState());
+    dispatch(taskStatisticApiSlice.util.resetApiState());
     navigate("/login");
   };
 
@@ -143,6 +110,7 @@ export default function Aside() {
     if (task === "delete") {
       setIsModalOpenDelete(false);
       deleteCategory(deleteTabId);
+      activeCategory(1)
       refetch();
     } else if (task === "add") {
       if (newTabTitle === "") {
@@ -159,6 +127,7 @@ export default function Aside() {
           isActive: false,
           isInitial: false,
         });
+        dispatch(updateTodo());
         refetch();
       }
     } else if (task === "statistic") {

@@ -9,8 +9,8 @@
       "status": "USER",
       "data": {
         "statistics": {
-          "tasks": 3,
-          "completed": 1,
+          "tasks": 6,
+          "completed": 2,
           "deleted": 0,
           "edited": 0
         },
@@ -31,6 +31,24 @@
             "id": 1744988307989,
             "title": "Развесить белье",
             "completed": true,
+            "category": "Дом"
+          },
+          {
+            "id": 1745765227897,
+            "title": "Залупайка",
+            "completed": true,
+            "category": "Дом"
+          },
+          {
+            "id": 1745765435310,
+            "title": "Подзалупаться на турнике",
+            "completed": false,
+            "category": "Спорт"
+          },
+          {
+            "id": 1745765455009,
+            "title": "выыф",
+            "completed": false,
             "category": "Дом"
           }
         ],

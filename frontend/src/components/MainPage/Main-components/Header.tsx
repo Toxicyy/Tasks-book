@@ -22,11 +22,11 @@ import NightThemeWhite from "../../../images/mainPage/header/NightThemeWhite.png
 import { closeDropdown, openDropdown } from "../../../state/Dropdown.slice";
 import PremiumModal from "../../PremiumPage/PremiumModal";
 import SettingsModal from "../../SettingsPage/SettingsModal";
-import { useAddTodoMutation} from "../../../state/todoListApi.slice";
-import { useGetUserQuery } from "../../../state/userApi.slice";
+import { todoListApiSlice, useAddTodoMutation} from "../../../state/todoListApi.slice";
+import { useGetUserQuery, userApiSlice } from "../../../state/userApi.slice";
 import { updateTodo } from "../../../state/forceUpdate.slice";
-import { useGetTaskStatisticQuery, useUpdateTaskStatisticMutation } from "../../../state/taskStatisticApi.slice";
-import { useGetCategoriesQuery } from "../../../state/categoriesApi.slice";
+import { taskStatisticApiSlice, useGetTaskStatisticQuery, useUpdateTaskStatisticMutation } from "../../../state/taskStatisticApi.slice";
+import { categoriesApiSlice, useGetCategoriesQuery } from "../../../state/categoriesApi.slice";
 
 export default function Header() {
   const theme = useSelector((state: AppState) => state.nightMode.mode);
@@ -71,6 +71,10 @@ export default function Header() {
   }
   const logOut = () => {
     localStorage.removeItem("token");
+    dispatch(userApiSlice.util.resetApiState());
+    dispatch(todoListApiSlice.util.resetApiState());
+    dispatch(categoriesApiSlice.util.resetApiState());
+    dispatch(taskStatisticApiSlice.util.resetApiState());
     navigate("/login");
   };
 
@@ -344,7 +348,7 @@ export default function Header() {
           </h1>
           <Select
             dropdownStyle={{ background: theme ? "#222831" : "#FAFAFA" }}
-            defaultValue={categoryData?.categories[0].title}
+            defaultValue={categoryData?.categories[0]?.title}
             style={{ width: 200, marginBottom: "20px" }}
             onChange={handleChange}
             options={categoryData?.categories.map((category) => ({
